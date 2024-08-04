@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hackathon_project/components/category.dart';
+import 'package:hackathon_project/components/product_card.dart';
 import 'package:hackathon_project/model/product_model.dart';
 
 import 'package:hackathon_project/services/auth/auth_service.dart';
@@ -44,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<List<ProductModel>> selectcategories = [
     all,
     shoes,
+    fashion,
   ];
 
   int selectedIndex = 0;
@@ -51,28 +53,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       body: SingleChildScrollView(
         child: Column(
           children: [
             SafeArea(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(Icons.menu),
-                    Text(
-                      'Home',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                    ),
-                    Icon(Icons.search)
-                  ],
-                ),
-              ),
+              child: CustomAppBar(barTitle:'Home',trailicon:Icon(Icons.menu),leadicon: Icon(Icons.search),),
             ),
             Stack(
+              clipBehavior: Clip.none,
               children: [
                 Container(
                   height: 200,
@@ -107,9 +96,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                Image.asset(
-                  'images/banner1.png',
-                  height: 40,
+                Positioned(
+                  right: -30,
+                  bottom: -90,
+                  child: Image.asset(
+                    'images/banner1.png',
+                    height: 350,
+                  ),
                 )
               ],
             ),
@@ -177,13 +170,50 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            Expanded(child: ListView.builder(itemBuilder: (context, index) {
-              return Container(
-                child: Column(),
-              );
-            }))
+            SizedBox(
+              height: 300,
+              width: 500,
+              child: ListView.builder(
+                  itemCount: selectcategories[selectedIndex].length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ProductCard(
+                        productModel: selectcategories[selectedIndex][index],
+                      ),
+                    );
+                  }),
+            ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CustomAppBar extends StatelessWidget {
+  const CustomAppBar({
+    super.key, required this.barTitle, required this.leadicon, required this.trailicon,
+  });
+  final String barTitle;
+  final Icon leadicon;
+  final Icon trailicon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          leadicon,
+          Text(
+            barTitle,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          trailicon,
+        ],
       ),
     );
   }
