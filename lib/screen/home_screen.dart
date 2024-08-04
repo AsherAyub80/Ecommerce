@@ -62,8 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
             SafeArea(
               child: CustomAppBar(
                 barTitle: 'Home',
-                trailicon: Icon(Icons.menu),
-                leadicon: Icon(Icons.search),
+                trailicon: Icon(Icons.search),
+                leadicon: Icon(Icons.menu),
               ),
             ),
             TopBanner(),

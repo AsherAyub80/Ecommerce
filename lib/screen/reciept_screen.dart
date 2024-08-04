@@ -11,14 +11,15 @@ class RecieptScreen extends StatelessWidget {
     return Scaffold(
         body: Center(
       child: Column(
-        children: [Container(
-height:200,
-width:350,
-          decoration:BoxDecoration(
-            color:Colors.grey,
-            
-          )
-        )],
+        
+        children: [
+          Container(
+              height: 200,
+              width: 350,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+              ))
+        ],
       ),
     ));
   }

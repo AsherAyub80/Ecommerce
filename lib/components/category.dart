@@ -6,8 +6,8 @@ class Category {
 
 List<Category> category = [
   Category(cateTitle: 'All'),
-  Category(cateTitle: 'Electronics'),
-  Category(cateTitle: 'Fashion'),
   Category(cateTitle: 'Shoes'),
+  Category(cateTitle: 'Fashion'),
+  Category(cateTitle: 'Electronic'),
   Category(cateTitle: 'Furniture'),
 ];

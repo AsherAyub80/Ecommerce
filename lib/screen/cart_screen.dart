@@ -214,8 +214,6 @@ class CartScreen extends StatelessWidget {
               text: 'CheckOut',
               onTap: () {
                 provider.checkout();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => RecieptScreen()));
               }),
           SizedBox(
             height: 10,

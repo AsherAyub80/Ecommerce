@@ -92,7 +92,7 @@ class _ProductDetailState extends State<ProductDetail> {
                         Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: List.generate(5, (index) {
-                              return Icon(Icons.star, color: Colors.yellow);
+                              return Icon(Icons.star, color: Colors.orange);
                             })),
                       ],
                     ),

@@ -72,7 +72,7 @@ class ProductCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(Icons.star, color: Colors.yellow, size: 20),
+                        Icon(Icons.star, color: Colors.orange, size: 20),
                         Text(productModel.review),
                       ],
                     ),
