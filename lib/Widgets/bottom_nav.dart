@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hackathon_project/screen/cart_screen.dart';
+import 'package:hackathon_project/screen/favourite.dart';
 import 'package:hackathon_project/screen/home_screen.dart';
 
 class BottomNav extends StatefulWidget {
@@ -8,12 +9,12 @@ class BottomNav extends StatefulWidget {
   @override
   State<BottomNav> createState() => _BottomNavState();
 }
+final
 
 List screens = [
   HomeScreen(),
-  Scaffold(),
-  Scaffold(),
-  Scaffold(),
+  Favourite(),
+  CartScreen(),
   Scaffold(),
 ];
 int currentIndex = 0;
@@ -48,8 +49,8 @@ class _BottomNavState extends State<BottomNav> {
                     currentIndex = 1;
                   });
                 },
-                icon: FaIcon(
-                  FontAwesomeIcons.bell,
+                icon: Icon(
+                  Icons.favorite_outline,
                   size: 30,
                   color: currentIndex == 1
                       ? Color(0xff4157FF)

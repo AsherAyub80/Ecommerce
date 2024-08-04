@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hackathon_project/components/category.dart';
 import 'package:hackathon_project/components/product_card.dart';
 import 'package:hackathon_project/model/product_model.dart';
+import 'package:hackathon_project/screen/category_sceen.dart';
+import 'package:hackathon_project/screen/popular_product.dart';
 
 import 'package:hackathon_project/services/auth/auth_service.dart';
 import 'package:hackathon_project/utils/const_text.dart';
@@ -58,54 +60,13 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             SafeArea(
-              child: CustomAppBar(barTitle:'Home',trailicon:Icon(Icons.menu),leadicon: Icon(Icons.search),),
+              child: CustomAppBar(
+                barTitle: 'Home',
+                trailicon: Icon(Icons.menu),
+                leadicon: Icon(Icons.search),
+              ),
             ),
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  height: 200,
-                  width: 400,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 30,
-                        ),
-                        BoldWhiteText(
-                          text: 'Nike Air Max 270',
-                          size: 25,
-                        ),
-                        ConstText(
-                            text: "Men's Shoes",
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        BoldWhiteText(text: '\$290.00', size: 25),
-                      ],
-                    ),
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.purple,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                Positioned(
-                  right: -30,
-                  bottom: -90,
-                  child: Image.asset(
-                    'images/banner1.png',
-                    height: 350,
-                  ),
-                )
-              ],
-            ),
+            TopBanner(),
             Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10),
@@ -116,7 +77,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     'Category',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
-                  Text('See All'),
+                  InkWell(
+                    
+                    onTap:(){
+Navigator.push(context, MaterialPageRoute(builder: (context)=>CategorySceen()));
+                    },
+                    child: Text('See All')),
                 ],
               ),
             ),
@@ -166,7 +132,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     'Popular Product',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
-                  Text('See All'),
+                  InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PopularProduct()));
+                      },
+                      child: Text('See All')),
                 ],
               ),
             ),
@@ -192,14 +165,72 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+class TopBanner extends StatelessWidget {
+  const TopBanner({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          height: 200,
+          width: 400,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 30,
+                ),
+                BoldWhiteText(
+                  text: 'Nike Air Max 270',
+                  size: 25,
+                ),
+                ConstText(
+                    text: "Men's Shoes",
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500),
+                SizedBox(
+                  height: 20,
+                ),
+                BoldWhiteText(text: '\$290.00', size: 25),
+              ],
+            ),
+          ),
+          decoration: BoxDecoration(
+            color: Colors.purple,
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        Positioned(
+          right: -30,
+          bottom: -90,
+          child: Image.asset(
+            'images/banner1.png',
+            height: 350,
+          ),
+        )
+      ],
+    );
+  }
+}
+
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({
-    super.key, required this.barTitle, required this.leadicon, required this.trailicon,
+    super.key,
+    required this.barTitle,
+    required this.leadicon,
+    required this.trailicon,
   });
   final String barTitle;
-  final Icon leadicon;
-  final Icon trailicon;
-
+  final Widget leadicon;
+  final Widget trailicon;
   @override
   Widget build(BuildContext context) {
     return Padding(

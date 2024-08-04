@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hackathon_project/model/product_model.dart';
+import 'package:hackathon_project/provider/favourite_provider.dart';
 import 'package:hackathon_project/screen/product_detail.dart';
+import 'package:provider/provider.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({
@@ -11,6 +13,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<FavouriteProvider>(context);
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -32,8 +35,13 @@ class ProductCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.favorite_outline_outlined))
+                    onPressed: () {
+                      provider.toggleFavourite(productModel);
+                    },
+                    icon: Icon(provider.isExist(productModel)
+                        ? Icons.favorite
+                        : Icons.favorite_outline),
+                    color: Colors.red),
               ],
             ),
             Container(

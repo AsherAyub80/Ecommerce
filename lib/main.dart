@@ -1,8 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
+import 'package:hackathon_project/provider/favourite_provider.dart';
+import 'package:hackathon_project/provider/provider.dart';
 import 'package:hackathon_project/services/auth/auth_gate.dart';
 import 'package:hackathon_project/firebase_options.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,9 +19,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AuthGate(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => CartProvider(),
+          
+        ),
+         ChangeNotifierProvider(
+          create: (_) => FavouriteProvider(),),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: AuthGate(),
+      ),
     );
   }
 }
