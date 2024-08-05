@@ -47,9 +47,9 @@ class _ProductDetailState extends State<ProductDetail> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => BottomNav()));
+                                builder: (context) => const BottomNav()));
                       },
-                      child: Icon(Icons.arrow_back_ios)),
+                      child: const Icon(Icons.arrow_back_ios)),
                 ),
               ),
               Container(
@@ -57,7 +57,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 child: Center(
                   child: Image.asset(widget.product.image),
                 ),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
@@ -71,33 +71,34 @@ class _ProductDetailState extends State<ProductDetail> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(widget.product.title,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            ConstText(
+                            const ConstText(
                                 text: 'Seller:',
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500),
-                            SizedBox(height: 5),
+                            const SizedBox(height: 5),
                             ConstText(
                                 text: widget.product.seller,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500),
                           ],
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: List.generate(5, (index) {
-                              return Icon(Icons.star, color: Colors.orange);
+                              return const Icon(Icons.star,
+                                  color: Colors.orange);
                             })),
                       ],
                     ),
                     Text("\$${widget.product.price.toString()}",
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.purple,
                           fontWeight: FontWeight.bold,
                           fontSize: 25,
@@ -110,11 +111,11 @@ class _ProductDetailState extends State<ProductDetail> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ConstText(
+                    const ConstText(
                         text: 'Color',
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       children: List.generate(
                           widget.product.colors.length,
@@ -152,13 +153,13 @@ class _ProductDetailState extends State<ProductDetail> {
                                 ),
                               )),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
-                    Text('About',
+                    const Text('About',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w500)),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     ConstText(
@@ -168,7 +169,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   ],
                 ),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               Center(
                 child: MyButton(
                     text: 'Add To Cart',
@@ -177,10 +178,10 @@ class _ProductDetailState extends State<ProductDetail> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => CartScreen()));
+                              builder: (context) => const CartScreen()));
                     }),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
             ],
           ),
         ));
@@ -203,7 +204,7 @@ class MyButton extends StatelessWidget {
         child: Center(
             child: Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 18,

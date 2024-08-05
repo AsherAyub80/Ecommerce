@@ -59,30 +59,32 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SafeArea(
+            const SafeArea(
               child: CustomAppBar(
                 barTitle: 'Home',
                 trailicon: Icon(Icons.search),
                 leadicon: Icon(Icons.menu),
               ),
             ),
-            TopBanner(),
+            const TopBanner(),
             Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Category',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
                   InkWell(
-                    
-                    onTap:(){
-Navigator.push(context, MaterialPageRoute(builder: (context)=>CategorySceen()));
-                    },
-                    child: Text('See All')),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CategorySceen()));
+                      },
+                      child: const Text('See All')),
                 ],
               ),
             ),
@@ -99,6 +101,13 @@ Navigator.push(context, MaterialPageRoute(builder: (context)=>CategorySceen()));
                         });
                       },
                       child: Container(
+                        height: 40,
+                        width: category[index].cateTitle.length > 5 ? 100 : 80,
+                        decoration: BoxDecoration(
+                            color: selectedIndex == index
+                                ? Colors.purple
+                                : Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(15)),
                         child: Center(
                           child: Text(
                             category[index].cateTitle,
@@ -109,13 +118,6 @@ Navigator.push(context, MaterialPageRoute(builder: (context)=>CategorySceen()));
                             ),
                           ),
                         ),
-                        height: 40,
-                        width: category[index].cateTitle.length > 5 ? 100 : 80,
-                        decoration: BoxDecoration(
-                            color: selectedIndex == index
-                                ? Colors.purple
-                                : Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(15)),
                       ),
                     ),
                   );
@@ -128,7 +130,7 @@ Navigator.push(context, MaterialPageRoute(builder: (context)=>CategorySceen()));
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Popular Product',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
@@ -139,7 +141,7 @@ Navigator.push(context, MaterialPageRoute(builder: (context)=>CategorySceen()));
                             MaterialPageRoute(
                                 builder: (context) => PopularProduct()));
                       },
-                      child: Text('See All')),
+                      child: const Text('See All')),
                 ],
               ),
             ),
@@ -178,8 +180,12 @@ class TopBanner extends StatelessWidget {
         Container(
           height: 200,
           width: 400,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
+          decoration: BoxDecoration(
+            color: Colors.purple,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(
               horizontal: 20.0,
             ),
             child: Column(
@@ -202,10 +208,6 @@ class TopBanner extends StatelessWidget {
                 BoldWhiteText(text: '\$290.00', size: 25),
               ],
             ),
-          ),
-          decoration: BoxDecoration(
-            color: Colors.purple,
-            borderRadius: BorderRadius.circular(20),
           ),
         ),
         Positioned(
@@ -241,7 +243,7 @@ class CustomAppBar extends StatelessWidget {
           leadicon,
           Text(
             barTitle,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
           trailicon,
         ],

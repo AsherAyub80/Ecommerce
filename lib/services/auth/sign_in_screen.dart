@@ -45,16 +45,16 @@ class _SignInScreenState extends State<SignInScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 80,
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15.0),
+            const Padding(
+              padding: EdgeInsets.only(left: 15.0),
               child: WelcomeText(
                 welcome: 'Welcome back! Glad\nto see you, Again',
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             TextFieldWidget(
@@ -88,7 +88,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             AuthButton(
@@ -132,7 +132,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     width: 100,
                     decoration: BoxDecoration(
                       boxShadow: [
-                        BoxShadow(
+                        const BoxShadow(
                           blurRadius: 1.5,
                           blurStyle: BlurStyle.outer,
                           color: Colors.grey,
@@ -147,22 +147,22 @@ class _SignInScreenState extends State<SignInScreen> {
                 }),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'Don’t have an account?',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 5,
                 ),
                 GestureDetector(
                   onTap: widget.onTap,
-                  child: Text(
+                  child: const Text(
                     'Register Now',
                     style: TextStyle(
                         color: Color(0xff35C2C1),
@@ -189,7 +189,8 @@ class WelcomeText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       welcome,
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28, height: 1.3),
+      style: const TextStyle(
+          fontWeight: FontWeight.bold, fontSize: 28, height: 1.3),
     );
   }
 }

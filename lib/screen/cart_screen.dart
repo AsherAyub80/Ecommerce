@@ -8,7 +8,7 @@ import 'package:hackathon_project/utils/const_text.dart';
 import 'package:provider/provider.dart';
 
 class CartScreen extends StatelessWidget {
-  CartScreen({super.key});
+  const CartScreen({super.key});
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CartProvider>(context);
@@ -20,13 +20,15 @@ class CartScreen extends StatelessWidget {
           SafeArea(
             child: CustomAppBar(
               barTitle: 'Cart ',
-              trailicon: Icon(Icons.shopping_cart_outlined),
+              trailicon: const Icon(Icons.shopping_cart_outlined),
               leadicon: GestureDetector(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => BottomNav()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const BottomNav()));
                   },
-                  child: Icon(Icons.arrow_back_ios)),
+                  child: const Icon(Icons.arrow_back_ios)),
             ),
           ),
           Expanded(
@@ -38,7 +40,7 @@ class CartScreen extends StatelessWidget {
                       key: Key(cartItem.toString()),
                       background: Container(
                         color: Colors.red,
-                        child: Icon(Icons.delete, color: Colors.white),
+                        child: const Icon(Icons.delete, color: Colors.white),
                       ),
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
@@ -49,6 +51,10 @@ class CartScreen extends StatelessWidget {
                         child: Container(
                           height: 150,
                           width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
@@ -57,25 +63,26 @@ class CartScreen extends StatelessWidget {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(height: 10),
+                                    const SizedBox(height: 10),
                                     Text(cartItem.title,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
                                         )),
-                                    SizedBox(height: 5),
+                                    const SizedBox(height: 5),
                                     Row(
                                       children: [
-                                        Icon(Icons.star, color: Colors.yellow),
+                                        const Icon(Icons.star,
+                                            color: Colors.yellow),
                                         ConstText(
                                             text: cartItem.review,
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold),
                                       ],
                                     ),
-                                    SizedBox(height: 5),
+                                    const SizedBox(height: 5),
                                     Text("\$${cartItem.price.toString()}",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: Colors.purple,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20,
@@ -90,17 +97,17 @@ class CartScreen extends StatelessWidget {
                                         MainAxisAlignment.spaceAround,
                                     children: [
                                       AddSub(
-                                          icon: Icon(Icons.add),
+                                          icon: const Icon(Icons.add),
                                           onTap: () {
                                             provider.increamentQty(index);
                                           }),
                                       Text(cartItem.quantity.toString(),
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 17,
                                           )),
                                       AddSub(
-                                          icon: Icon(Icons.remove),
+                                          icon: const Icon(Icons.remove),
                                           onTap: () {
                                             provider.decreamentQty(index);
                                           }),
@@ -121,15 +128,15 @@ class CartScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
                         ),
                       ),
                     );
                   })),
           Container(
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10), color: Colors.white),
             child: Column(
               children: [
                 Padding(
@@ -137,12 +144,12 @@ class CartScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ConstText(
+                      const ConstText(
                           text: 'select item:',
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                       Text(provider.cart.length.toString(),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold))
                     ],
                   ),
@@ -152,18 +159,18 @@ class CartScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ConstText(
+                      const ConstText(
                           text: 'Sub total:',
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                       Text('\$${provider.totalPrice().toString()}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -190,32 +197,28 @@ class CartScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ConstText(
+                      const ConstText(
                           text: 'Total:',
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                       Text('\$${provider.totalPrice().toString()}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
               ],
             ),
-            height: 200,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10), color: Colors.white),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           MyButton(
               text: 'CheckOut',
               onTap: () {
-                provider.checkout();
+                provider.checkout(context);
               }),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
         ],
@@ -237,11 +240,11 @@ class AddSub extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        child: icon,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(color: Colors.grey),
         ),
+        child: icon,
       ),
     );
   }

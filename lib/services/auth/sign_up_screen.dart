@@ -39,14 +39,14 @@ void signUp(BuildContext context) async {
 
         showDialog(
           context: context,
-          builder: (context) => CircularProgressIndicator(),
+          builder: (context) => const CircularProgressIndicator(),
           barrierDismissible: false,
         );
         Navigator.pop(context);
       } else {
         showDialog(
             context: context,
-            builder: (context) => AlertDialog(
+            builder: (context) => const AlertDialog(
                   title: Text("Error"),
                   content: Text("Please enter user name"),
                 ));
@@ -55,7 +55,7 @@ void signUp(BuildContext context) async {
       Navigator.pop(context);
       showDialog(
           context: context,
-          builder: (context) => AlertDialog(
+          builder: (context) => const AlertDialog(
                 title: Text("Invallid Credinential"),
                 content: Text("Password don't match"),
               ));
@@ -100,16 +100,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 80,
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15.0),
+            const Padding(
+              padding: EdgeInsets.only(left: 15.0),
               child: WelcomeText(
                 welcome: 'Hello! Register to get\nstarted',
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             TextFieldWidget(
@@ -150,7 +150,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               obsecure: isConfrim,
               label: 'Confirm your password',
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             AuthButton(
@@ -194,7 +194,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     width: 100,
                     decoration: BoxDecoration(
                       boxShadow: [
-                        BoxShadow(
+                        const BoxShadow(
                           blurRadius: 1.5,
                           blurStyle: BlurStyle.outer,
                           color: Colors.grey,
@@ -209,22 +209,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 }),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'Already have an account?',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 5,
                 ),
                 GestureDetector(
                   onTap: widget.onTap,
-                  child: Text(
+                  child: const Text(
                     'Sign in Now',
                     style: TextStyle(
                         color: Color(0xff35C2C1),
@@ -234,7 +234,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
           ],

@@ -21,17 +21,17 @@ class _FavouriteState extends State<Favourite> {
         leading: InkWell(
             onTap: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => BottomNav()));
+                  MaterialPageRoute(builder: (context) => const BottomNav()));
             },
-            child: Icon(Icons.arrow_back_ios)),
+            child: const Icon(Icons.arrow_back_ios)),
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Favourite',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: provider.favourites.isEmpty
-          ? Center(
+          ? const Center(
               child: Text(
                 'There is no favourite item',
                 style: TextStyle(

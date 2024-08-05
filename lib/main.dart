@@ -6,12 +6,13 @@ import 'package:hackathon_project/provider/provider.dart';
 import 'package:hackathon_project/services/auth/auth_gate.dart';
 import 'package:hackathon_project/firebase_options.dart';
 import 'package:provider/provider.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -23,13 +24,17 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (_) => CartProvider(),
-          
         ),
-         ChangeNotifierProvider(
-          create: (_) => FavouriteProvider(),),
+        ChangeNotifierProvider(
+          create: (_) => FavouriteProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        builder: BotToastInit(), //1. call BotToastInit
+        navigatorObservers: [
+          BotToastNavigatorObserver()
+        ], //2. registered route observer
         home: AuthGate(),
       ),
     );

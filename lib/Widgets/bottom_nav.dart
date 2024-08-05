@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hackathon_project/screen/cart_screen.dart';
 import 'package:hackathon_project/screen/favourite.dart';
 import 'package:hackathon_project/screen/home_screen.dart';
+import 'package:hackathon_project/screen/profile.dart';
 
 class BottomNav extends StatefulWidget {
   const BottomNav({super.key});
@@ -12,9 +13,9 @@ class BottomNav extends StatefulWidget {
 
 final List screens = [
   HomeScreen(),
-  Favourite(),
-  CartScreen(),
-  Scaffold(),
+  const Favourite(),
+  const CartScreen(),
+  ProdileScreen(),
 ];
 int currentIndex = 0;
 

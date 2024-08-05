@@ -23,23 +23,23 @@ class _CategorySceenState extends State<CategorySceen> {
               SafeArea(
                 child: CustomAppBar(
                   barTitle: 'Category',
-                  trailicon: Icon(Icons.search),
+                  trailicon: const Icon(Icons.search),
                   leadicon: InkWell(
                       onTap: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => BottomNav()));
+                                builder: (context) => const BottomNav()));
                       },
-                      child: Icon(Icons.arrow_back_ios)),
+                      child: const Icon(Icons.arrow_back_ios)),
                 ),
               ),
-              TopBanner(),
+              const TopBanner(),
               GridView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: categoryList.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, // number of items in each row
                   mainAxisSpacing: 10.0, // spacing between rows
                   crossAxisSpacing: 10.0, // spacing between columns
@@ -74,7 +74,7 @@ class _CategorySceenState extends State<CategorySceen> {
                               child: categoryList[index],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 20,
                           ),
                           Text(

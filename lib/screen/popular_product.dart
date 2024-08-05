@@ -18,24 +18,22 @@ class PopularProduct extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<FavouriteProvider>(context);
 
-    
-
     return Scaffold(
         appBar: AppBar(
           leading: InkWell(
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => BottomNav()));
+                    MaterialPageRoute(builder: (context) => const BottomNav()));
               },
-              child: Icon(Icons.arrow_back_ios)),
+              child: const Icon(Icons.arrow_back_ios)),
           centerTitle: true,
-          title: Text(
+          title: const Text(
             'Popular Product',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         body: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, // number of items in each row
             mainAxisSpacing: 8.0, // spacing between rows
             crossAxisSpacing: 8.0, // spacing between columns
@@ -94,24 +92,24 @@ class PopularProduct extends StatelessWidget {
                           children: [
                             Text(
                               selectcategories[select][index].title,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Icon(Icons.star,
+                                const Icon(Icons.star,
                                     color: Colors.yellow, size: 20),
                                 Text(selectcategories[0][index].review),
                               ],
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Text(
                                 "\$${selectcategories[select][index].price.toString()}",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.purple,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18)),

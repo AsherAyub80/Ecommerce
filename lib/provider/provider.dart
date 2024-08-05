@@ -1,12 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:hackathon_project/model/product_model.dart';
+import 'package:hackathon_project/model/product_model.dart' as pm;
+import 'package:hackathon_project/screen/reciept_screen.dart';
 import 'package:hackathon_project/services/auth/firestore_service.dart';
 
 class CartProvider extends ChangeNotifier {
-  final List<ProductModel> _cart = [];
-  List<ProductModel> get cart => _cart;
+  final List<pm.ProductModel> _cart = [];
+  List<pm.ProductModel> get cart => _cart;
 
-  void addToCart(ProductModel product) {
+  void addToCart(pm.ProductModel product) {
     if (_cart.contains(product)) {
       for (var element in _cart) {
         element.quantity++;
@@ -40,21 +44,30 @@ class CartProvider extends ChangeNotifier {
 
   totalPrice() {
     double total = 0.0;
-    for (ProductModel element in _cart) {
+    for (pm.ProductModel element in _cart) {
       total += element.price * element.quantity;
     }
 
     return total;
   }
 
-  Future<void> checkout() async {
+  Future<void> checkout(BuildContext ctx) async {
+    BotToast.showLoading();
     final firestoreService = FirestoreService();
     final total = totalPrice();
-
+    final List<pm.ProductModel> myCart =
+        List.from(cart); // Create a copy of the cart
     // Store the order in Firestore
     await firestoreService.addOrder(cart, total);
-
+    debugPrint("Cart Length ${cart.length}");
     _cart.clear();
+    BotToast.closeAllLoading();
+    BotToast.showText(text: "Order Placed!", contentColor: Colors.green);
     notifyListeners();
+    Navigator.pushReplacement(ctx, MaterialPageRoute(
+      builder: (context) {
+        return RecieptScreen(listCart: myCart);
+      },
+    ));
   }
 }
