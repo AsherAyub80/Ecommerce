@@ -13,30 +13,35 @@ class SignInScreen extends StatefulWidget {
   State<SignInScreen> createState() => _SignInScreenState();
 }
 
-TextEditingController email = TextEditingController();
-TextEditingController pass = TextEditingController();
-
-void login(BuildContext context) async {
-  //get instance
-  final authService = AuthService();
-
-  //try sign in
-  try {
-    await authService.signInWithEmailPassword(email.text, pass.text);
-  } //dsiplay any error
-  catch (e) {
-    showDialog(
-        // ignore: use_build_context_synchronously
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text(e.toString()),
-            ));
-  }
-}
-
-bool isVisible = true;
-
 class _SignInScreenState extends State<SignInScreen> {
+  TextEditingController email = TextEditingController();
+  TextEditingController pass = TextEditingController();
+  @override
+  void dispose() {
+    email.dispose();
+    pass.dispose();
+    super.dispose();
+  }
+
+  void login(BuildContext context) async {
+    //get instance
+    final authService = AuthService();
+
+    //try sign in
+    try {
+      await authService.signInWithEmailPassword(email.text, pass.text);
+    } //dsiplay any error
+    catch (e) {
+      showDialog(
+          // ignore: use_build_context_synchronously
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text(e.toString()),
+              ));
+    }
+  }
+
+  bool isVisible = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
