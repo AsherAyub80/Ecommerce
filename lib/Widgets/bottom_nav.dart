@@ -4,22 +4,34 @@ import 'package:hackathon_project/screen/favourite.dart';
 import 'package:hackathon_project/screen/home_screen.dart';
 import 'package:hackathon_project/screen/profile.dart';
 
+
+final GlobalKey<_BottomNavState> bottomNavKey = GlobalKey<_BottomNavState>();
+
 class BottomNav extends StatefulWidget {
   const BottomNav({super.key});
+
 
   @override
   State<BottomNav> createState() => _BottomNavState();
 }
 
-final List screens = [
+
+
+class _BottomNavState extends State<BottomNav> {
+  final List screens = [
   HomeScreen(),
   const Favourite(),
   const CartScreen(),
   ProdileScreen(),
+  
 ];
 int currentIndex = 0;
+  void resetToFirstTab() {
+    setState(() {
+      currentIndex = 0;
+    });
+  }
 
-class _BottomNavState extends State<BottomNav> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

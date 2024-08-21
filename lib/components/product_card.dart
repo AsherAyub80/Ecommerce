@@ -5,23 +5,25 @@ import 'package:hackathon_project/screen/product_detail.dart';
 import 'package:provider/provider.dart';
 
 class ProductCard extends StatelessWidget {
+  final Product product;
+
   const ProductCard({
-    super.key,
-    required this.productModel,
-  });
-  final ProductModel productModel;
+    Key? key,
+    required this.product,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<FavouriteProvider>(context);
+    final favouriteProvider = Provider.of<FavouriteProvider>(context);
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ProductDetail(
-                      product: productModel,
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetail(product: product),
+          ),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -30,62 +32,80 @@ class ProductCard extends StatelessWidget {
         ),
         width: 200,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+            Stack(
               children: [
-                IconButton(
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 35),
+                    child: Container(
+                      height: 140,
+                      width: 160,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: product.imageUrl.isNotEmpty
+                          ? Image.network(
+                              product.imageUrl,
+                              fit: BoxFit.fill,
+                            )
+                          : Center(
+                              child: Text('No Image'),
+                            ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: -8,
+                  child: IconButton(
                     onPressed: () {
-                      provider.toggleFavourite(productModel);
+                      favouriteProvider.toggleFavourite(product);
                     },
-                    icon: Icon(provider.isExist(productModel)
-                        ? Icons.favorite
-                        : Icons.favorite_outline),
-                    color: Colors.red),
+                    icon: Icon(
+                      favouriteProvider.isExist(product)
+                          ? Icons.favorite
+                          : Icons.favorite_outline,
+                    ),
+                    color: Colors.red,
+                  ),
+                ),
               ],
             ),
-            Container(
-              height: 140,
-              width: 160,
-              child: Image.asset(
-                productModel.image,
-                fit: BoxFit.fill,
-              ),
-              decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20.0, top: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      productModel.title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(Icons.star, color: Colors.orange, size: 20),
-                        Text(productModel.review),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    Text("\$${productModel.price.toString()}",
-                        style: TextStyle(
-                            color: Colors.purple,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18)),
-                  ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                product.title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
                 ),
               ),
-            )
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                children: [
+                  Icon(Icons.star, color: Colors.orange, size: 20),
+                  SizedBox(width: 4),
+                  Text(
+                      '${product.reviews.length} Reviews'), // Update to show review count
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                '\$${product.price.toStringAsFixed(2)}',
+                style: TextStyle(
+                  color: Colors.purple,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
           ],
         ),
       ),

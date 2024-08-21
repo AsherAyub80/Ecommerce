@@ -3,20 +3,21 @@ import 'package:hackathon_project/model/product_model.dart';
 import 'package:provider/provider.dart';
 
 class FavouriteProvider extends ChangeNotifier {
-  final List<ProductModel> _favourite = [];
-  List<ProductModel> get favourites => _favourite;
-  void toggleFavourite(ProductModel product) {
+  final List<Product> _favourite = [];
+
+  List<Product> get favourites => _favourite;
+
+  void toggleFavourite(Product product) {
     if (_favourite.contains(product)) {
-      _favourite.remove(product);
+      _favourite.removeWhere((p) => p.id == product.id);
     } else {
       _favourite.add(product);
     }
     notifyListeners();
   }
 
-  bool isExist(ProductModel product) {
-    final isExist = _favourite.contains(product);
-    return isExist;
+  bool isExist(Product product) {
+    return _favourite.any((p) => p.id == product.id);
   }
 
   static FavouriteProvider of(

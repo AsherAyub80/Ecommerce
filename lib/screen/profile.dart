@@ -10,19 +10,18 @@ class ProdileScreen extends StatelessWidget {
     return Scaffold(
       body: Center(
           child: ElevatedButton(
-       onPressed: () async {
-            try {
-              await authService.signOut();
-              // Optionally navigate to a different screen or show a message
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Signed out successfully')),
-              );
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Sign out failed: $e')),
-              );
-            }
-          },
+        onPressed: () async {
+          try {
+            await authService.signOut();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Signed out successfully')),
+            );
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Sign out failed: $e')),
+            );
+          }
+        },
         child: const Text(
           'signout',
           style: TextStyle(color: Colors.black),

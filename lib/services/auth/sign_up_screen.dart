@@ -30,8 +30,8 @@ void signUp(BuildContext context) async {
   try {
     if (pass.text == confirmPass.text) {
       if (name.text.isNotEmpty) {
-        await authService.signUpWithEmailPassword(email.text, pass.text);
-        addUser();
+        await authService.signUpWithEmailPassword(
+            email.text, pass.text, name.text);
         email.clear();
         pass.clear();
         name.clear();
@@ -42,7 +42,7 @@ void signUp(BuildContext context) async {
           builder: (context) => const CircularProgressIndicator(),
           barrierDismissible: false,
         );
-        Navigator.pop(context);
+        Navigator.of(context).pop;
       } else {
         showDialog(
             context: context,
@@ -52,7 +52,7 @@ void signUp(BuildContext context) async {
                 ));
       }
     } else {
-      Navigator.pop(context);
+      Navigator.of(context).pop;
       showDialog(
           context: context,
           builder: (context) => const AlertDialog(
@@ -61,24 +61,11 @@ void signUp(BuildContext context) async {
               ));
     }
   } catch (e) {
-    Navigator.pop(context);
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
               title: Text(e.toString()),
             ));
-  }
-}
-
-Future<void> addUser() async {
-  try {
-    await users.add({
-      'username': name.text,
-      'email': email.text,
-    });
-    print('User added');
-  } catch (error) {
-    print('Failed to add user: $error');
   }
 }
 

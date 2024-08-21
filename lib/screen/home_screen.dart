@@ -1,118 +1,129 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hackathon_project/components/category.dart';
-import 'package:hackathon_project/components/product_card.dart';
-import 'package:hackathon_project/model/product_model.dart';
 import 'package:hackathon_project/screen/category_sceen.dart';
 import 'package:hackathon_project/screen/popular_product.dart';
-
-import 'package:hackathon_project/services/auth/auth_service.dart';
 import 'package:hackathon_project/utils/const_text.dart';
+import 'package:provider/provider.dart';
+import 'package:hackathon_project/provider/product_provider.dart';
+import 'package:hackathon_project/components/product_card.dart';
+import 'package:hackathon_project/screen/product_detail.dart';
 
-// ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {
-  HomeScreen({
-    super.key,
-  });
-
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final authService = AuthService();
+  int _selectedIndex = 0;
+  bool _isLoading = true; // Flag for loading state
 
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
-
-  Future<DocumentSnapshot> getUserData() async {
-    final currentUser = authService.getCurrentUser();
-    if (currentUser != null) {
-      final email = currentUser.email;
-      if (email != null) {
-        QuerySnapshot querySnapshot =
-            await users.where('email', isEqualTo: email).get();
-        if (querySnapshot.docs.isNotEmpty) {
-          return querySnapshot.docs.first;
-        } else {
-          throw Exception('No user data found');
-        }
-      } else {
-        throw Exception('User email is null');
-      }
-    } else {
-      throw Exception('No user is currently logged in');
-    }
-  }
-
-  List<List<ProductModel>> selectcategories = [
-    all,
-    shoes,
-    fashion,
+  final categories = [
+    'Electronics',
+    'Shoes',
+    'Men Fashion',
+    'Women Fashion',
+    'Jewelry',
+    'Beauty',
   ];
 
-  int selectedIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+    _fetchProducts();
+  }
+
+  Future<void> _fetchProducts() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      await Provider.of<ProductProvider>(context, listen: false)
+          .fetchProductsByCategory(categories[_selectedIndex]);
+    } catch (e) {
+      print('Error fetching products: $e');
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void _onCategoryTap(int index) async {
+    setState(() {
+      _selectedIndex = index;
+      _isLoading = true;
+    });
+    try {
+      await Provider.of<ProductProvider>(context, listen: false)
+          .fetchProductsByCategory(categories[index]);
+    } catch (e) {
+      print('Error fetching products: $e');
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final productProvider = Provider.of<ProductProvider>(context);
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade200,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SafeArea(
-              child: CustomAppBar(
-                barTitle: 'Home',
-                trailicon: Icon(Icons.search),
-                leadicon: Icon(Icons.menu),
-              ),
-            ),
-            const TopBanner(),
-            Padding(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('Home'),
+        leading: SizedBox(),
+      ),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: TopBanner(),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Category',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
+                  const Text('Category',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
                   InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CategorySceen()));
-                      },
-                      child: const Text('See All')),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CategorySceen()),
+                      );
+                    },
+                    child: const Text('See All'),
+                  ),
                 ],
               ),
             ),
-            SingleChildScrollView(
+          ),
+          SliverToBoxAdapter(
+            child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: List.generate(category.length, (index) {
+                children: List.generate(categories.length, (index) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedIndex = index;
-                        });
-                      },
+                      onTap: () => _onCategoryTap(index),
                       child: Container(
                         height: 40,
-                        width: category[index].cateTitle.length > 5 ? 100 : 80,
+                        width: categories[index].length > 5 ? 120 : 80,
                         decoration: BoxDecoration(
-                            color: selectedIndex == index
-                                ? Colors.purple
-                                : Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(15)),
+                          color: _selectedIndex == index
+                              ? Colors.purple
+                              : Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                         child: Center(
                           child: Text(
-                            category[index].cateTitle,
+                            categories[index],
                             style: TextStyle(
-                              color: selectedIndex == index
+                              color: _selectedIndex == index
                                   ? Colors.white
                                   : Colors.black,
                             ),
@@ -124,44 +135,64 @@ class _HomeScreenState extends State<HomeScreen> {
                 }),
               ),
             ),
-            Padding(
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Popular Product',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
+                  const Text('Products',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
                   InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PopularProduct()));
-                      },
-                      child: const Text('See All')),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PopularProduct()),
+                      );
+                    },
+                    child: const Text('See All'),
+                  ),
                 ],
               ),
             ),
-            SizedBox(
-              height: 300,
-              width: 500,
-              child: ListView.builder(
-                  itemCount: selectcategories[selectedIndex].length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ProductCard(
-                        productModel: selectcategories[selectedIndex][index],
-                      ),
-                    );
-                  }),
-            ),
-          ],
-        ),
+          ),
+          _isLoading
+              ? SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              : SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final product = productProvider.products[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProductDetail(product: product),
+                              ),
+                            );
+                          },
+                          child: ProductCard(product: product),
+                        ),
+                      );
+                    },
+                    childCount: productProvider.products.length,
+                  ),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 8,
+                    childAspectRatio: 0.65,
+                  ),
+                ),
+        ],
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:hackathon_project/provider/favourite_provider.dart';
+import 'package:hackathon_project/provider/product_provider.dart';
 import 'package:hackathon_project/provider/provider.dart';
 import 'package:hackathon_project/services/auth/auth_gate.dart';
 import 'package:hackathon_project/firebase_options.dart';
@@ -27,7 +28,13 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => FavouriteProvider(),
+          
         ),
+           ChangeNotifierProvider(
+          create: (_) => ProductProvider(),
+          
+        ),
+        
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

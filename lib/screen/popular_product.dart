@@ -5,13 +5,14 @@ import 'package:hackathon_project/provider/favourite_provider.dart';
 import 'package:hackathon_project/screen/product_detail.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class PopularProduct extends StatelessWidget {
   PopularProduct({
     super.key,
   });
 
-  List<List<ProductModel>> selectcategories = [
-    all,
+  List<List<Product>> selectcategories = [
+    
   ];
   int select = 0;
   @override
@@ -34,9 +35,9 @@ class PopularProduct extends StatelessWidget {
         ),
         body: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // number of items in each row
-            mainAxisSpacing: 8.0, // spacing between rows
-            crossAxisSpacing: 8.0, // spacing between columns
+            crossAxisCount: 2,
+            mainAxisSpacing: 8.0,
+            crossAxisSpacing: 8.0,
             childAspectRatio: 0.70,
           ),
           itemCount: selectcategories[select].length,
@@ -76,8 +77,8 @@ class PopularProduct extends StatelessWidget {
                     Container(
                       height: 140,
                       width: 160,
-                      child: Image.asset(
-                        selectcategories[0][index].image,
+                      child: Image.network(
+                        selectcategories[0][index].imageUrl,
                         fit: BoxFit.fill,
                       ),
                       decoration: BoxDecoration(
@@ -103,7 +104,10 @@ class PopularProduct extends StatelessWidget {
                               children: [
                                 const Icon(Icons.star,
                                     color: Colors.yellow, size: 20),
-                                Text(selectcategories[0][index].review),
+                                Text(selectcategories[0][index]
+                                    .reviews
+                                    .length
+                                    .toString()),
                               ],
                             ),
                             const SizedBox(height: 8),
