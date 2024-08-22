@@ -61,11 +61,7 @@ void signUp(BuildContext context) async {
               ));
     }
   } catch (e) {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text(e.toString()),
-            ));
+    print(e);
   }
 }
 

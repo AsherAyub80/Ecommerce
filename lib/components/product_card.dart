@@ -47,9 +47,12 @@ class ProductCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: product.imageUrl.isNotEmpty
-                          ? Image.network(
-                              product.imageUrl,
-                              fit: BoxFit.fill,
+                          ? Hero(
+                              tag: product.imageUrl,
+                              child: Image.network(
+                                product.imageUrl,
+                                fit: BoxFit.fill,
+                              ),
                             )
                           : Center(
                               child: Text('No Image'),
@@ -90,8 +93,16 @@ class ProductCard extends StatelessWidget {
                 children: [
                   Icon(Icons.star, color: Colors.orange, size: 20),
                   SizedBox(width: 4),
+
                   Text(
-                      '${product.reviews.length} Reviews'), // Update to show review count
+                    product.averageRating.toStringAsFixed(2),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(width: 4),
+                  
+                  //review count
+                  Text(
+                      ' Reviews (${product.reviews.length})'), 
                 ],
               ),
             ),

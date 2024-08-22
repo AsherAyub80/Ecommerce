@@ -33,8 +33,10 @@ class Product {
 
     // Parse reviews from Firestore data
     List<Review> parsedReviews = (data['reviews'] as List<dynamic>?)
-        ?.map((reviewData) => Review.fromMap(reviewData as Map<String, dynamic>))
-        .toList() ?? [];
+            ?.map((reviewData) =>
+                Review.fromMap(reviewData as Map<String, dynamic>))
+            .toList() ??
+        [];
 
     return Product(
       id: doc.id,
@@ -49,13 +51,13 @@ class Product {
       quantity: data['quantity'] ?? 0,
       reviews: parsedReviews,
     );
-    
-  }  double get averageRating {
+  }
+  double get averageRating {
     if (reviews.isEmpty) return 0.0;
-    double totalRating = reviews.fold(0.0, (sum, review) => sum + review.rating);
+    double totalRating =
+        reviews.fold(0.0, (sum, review) => sum + review.rating);
     return totalRating / reviews.length;
   }
-
 
   @override
   bool operator ==(Object other) {

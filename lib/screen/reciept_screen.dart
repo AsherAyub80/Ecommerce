@@ -83,6 +83,8 @@ class _RecieptScreenState extends State<RecieptScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ConstText(
+                  textOverflow: null,
+                  maxLine: null,
                   text: 'Thanks for your order $username',
                   color: Colors.black,
                   fontSize: 18,
@@ -124,6 +126,8 @@ class _RecieptScreenState extends State<RecieptScreen> {
                                         const Icon(Icons.star,
                                             color: Colors.yellow),
                                         ConstText(
+                                          maxLine: null,
+                                          textOverflow: null,
                                           text: cartItem.reviews.length
                                               .toString(),
                                           fontSize: 15,

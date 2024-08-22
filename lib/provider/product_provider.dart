@@ -4,34 +4,29 @@ import 'package:hackathon_project/model/product_model.dart';
 import 'package:hackathon_project/model/review_model.dart';
 
 class ProductProvider with ChangeNotifier {
-  final List<Product> _products = [];
+   List<Product> _products = [];
   int _selectedIndex = 0;
 
   List<Product> get products => _products;
   int get selectedIndex => _selectedIndex;
 
-  Future<void> fetchProductsByCategory(String category) async {
-    try {
-      final QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('products')
-          .where('category', isEqualTo: category)
-          .get();
 
-      final List<Product> loadedProducts = [];
-      for (var doc in snapshot.docs) {
-        loadedProducts.add(Product.fromFirestore(doc));
-      }
-
-      _products.clear();
-      _products.addAll(loadedProducts);
-
-      notifyListeners();
-    } catch (e) {
-      print('Failed to fetch products: $e');
-      throw e;
-    }
+  Future<void> fetchAllProducts() async {
+    // For example:
+    final QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('products').get();
+    _products = snapshot.docs.map((doc) => Product.fromFirestore(doc)).toList();
+    notifyListeners();
   }
-
+  void listenToProductChanges(String productId) {
+  FirebaseFirestore.instance.collection('products').doc(productId).snapshots().listen((snapshot) {
+    final updatedProduct = Product.fromFirestore(snapshot);
+    final productIndex = _products.indexWhere((product) => product.id == productId);
+    if (productIndex != -1) {
+      _products[productIndex] = updatedProduct;
+      notifyListeners();
+    }
+  });
+}
 
     Future<void> addReviewToProduct(String productId, Review review) async {
     final productIndex = _products.indexWhere((product) => product.id == productId);

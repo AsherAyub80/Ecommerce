@@ -141,7 +141,7 @@ class _CartScreenState extends State<CartScreen> {
                                     ConstText(
                                       text: cartItem.reviews.length.toString(),
                                       fontSize: 15,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.bold, textOverflow: null, maxLine: null,
                                     ),
                                   ],
                                 ),
@@ -222,7 +222,7 @@ class _CartScreenState extends State<CartScreen> {
                       const ConstText(
                         text: 'Selected items:',
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold, textOverflow: null, maxLine: null,
                       ),
                       Text(
                         provider.cart.length.toString(),
@@ -242,7 +242,7 @@ class _CartScreenState extends State<CartScreen> {
                       const ConstText(
                         text: 'Sub total:',
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold, textOverflow: null, maxLine: null,
                       ),
                       Text(
                         '\$${provider.totalPrice().toString()}',
@@ -262,7 +262,7 @@ class _CartScreenState extends State<CartScreen> {
                       ConstText(
                         text: 'Discount (%0):',
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold, textOverflow: null, maxLine: null,
                       ),
                       Text(
                         '\$0',
@@ -290,7 +290,7 @@ class _CartScreenState extends State<CartScreen> {
                       const ConstText(
                         text: 'Total:',
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold, textOverflow: null, maxLine: null,
                       ),
                       Text(
                         '\$${provider.totalPrice().toString()}',

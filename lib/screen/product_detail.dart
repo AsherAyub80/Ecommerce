@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hackathon_project/model/product_model.dart';
-
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:hackathon_project/model/review_model.dart';
 import 'package:hackathon_project/provider/favourite_provider.dart';
 import 'package:hackathon_project/provider/product_provider.dart';
 import 'package:hackathon_project/provider/provider.dart';
+import 'package:hackathon_project/screen/add_review.dart';
 import 'package:hackathon_project/screen/cart_screen.dart';
 import 'package:hackathon_project/screen/home_screen.dart';
-import 'package:hackathon_project/services/auth/auth_service.dart';
+import 'package:hackathon_project/screen/more_reviews_screen.dart';
 import 'package:hackathon_project/utils/const_text.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -24,80 +24,31 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   int currentColor = 0;
- 
+  bool seeMore = false;
 
-  void _showReviewDialog(BuildContext context) async {
-    final TextEditingController reviewController = TextEditingController();
-    double userRating = 3.0;
-
-    final authService = AuthService();
-    final currentUser = authService.getCurrentUser();
-    final userDetails = await authService.loadCurrentUserDetails();
-    final userName = userDetails?['username'] ?? 'Anonymous';
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Add Review'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RatingBar.builder(
-                initialRating: 3,
-                minRating: 1,
-                direction: Axis.horizontal,
-                allowHalfRating: true,
-                itemCount: 5,
-                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                itemBuilder: (context, _) => Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                ),
-                onRatingUpdate: (rating) {
-                  userRating = rating;
-                },
-              ),
-              TextField(
-                controller: reviewController,
-                decoration: InputDecoration(hintText: 'Write a review'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                final review = Review(
-                  userId: currentUser?.uid ?? 'unknown',
-                  userName: userName,
-                  comment: reviewController.text,
-                  rating: userRating,
-                  date: DateTime.now(),
-                );
-
-                Provider.of<ProductProvider>(context, listen: false)
-                    .addReviewToProduct(widget.product.id, review);
-                Navigator.of(context).pop();
-              },
-              child: Text('Submit'),
-            ),
-          ],
-        );
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    // Start listening for product changes
+    final productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
+    productProvider.listenToProductChanges(widget.product.id);
   }
 
   @override
   Widget build(BuildContext context) {
+    final productProvider = Provider.of<ProductProvider>(context);
+    final product = productProvider.products
+        .firstWhere((prod) => prod.id == widget.product.id);
     final favProvider = Provider.of<FavouriteProvider>(context);
     final cart = Provider.of<CartProvider>(context);
     final DateFormat formatter = DateFormat('yyyy-MMM-dd');
+
+    // Sort reviews by date (newest first)
+    final sortedReviews = product.reviews.reversed.toList();
+
+    // Show only the newest 3 reviews
+    final List<Review> reviewsToShow = sortedReviews.take(3).toList();
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
@@ -110,10 +61,10 @@ class _ProductDetailState extends State<ProductDetail> {
                 barTitle: 'Product Detail',
                 trailicon: IconButton(
                   onPressed: () {
-                    favProvider.toggleFavourite(widget.product);
+                    favProvider.toggleFavourite(product);
                   },
                   icon: Icon(
-                    favProvider.isExist(widget.product)
+                    favProvider.isExist(product)
                         ? Icons.favorite
                         : Icons.favorite_outline,
                   ),
@@ -127,20 +78,23 @@ class _ProductDetailState extends State<ProductDetail> {
                 ),
               ),
             ),
-            Container(
-              height: 200,
-              child: Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Image.network(
-                    widget.product.imageUrl,
-                    fit: BoxFit.fill,
+            Hero(
+              tag: product.imageUrl,
+              child: Container(
+                height: 200,
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: Image.network(
+                      product.imageUrl,
+                      fit: BoxFit.fill,
+                    ),
                   ),
                 ),
-              ),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
               ),
             ),
             Padding(
@@ -152,7 +106,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.product.title,
+                        product.title,
                         style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
@@ -163,32 +117,38 @@ class _ProductDetailState extends State<ProductDetail> {
                             text: 'Seller:',
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
+                            textOverflow: null,
+                            maxLine: null,
                           ),
                           const SizedBox(width: 5),
                           ConstText(
-                            text: widget.product.seller,
+                            text: product.seller,
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
+                            textOverflow: null,
+                            maxLine: null,
                           ),
                         ],
                       ),
                       const SizedBox(height: 5),
-                 RatingBarIndicator(
-                        rating: widget.product.averageRating,
-                        itemCount: 5,
-                        itemSize: 20.0,
-                        direction: Axis.horizontal,
-                        itemBuilder: (context, _) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
+                      Row(
+                        children: [
+                          RatingBarIndicator(
+                            rating: product.rating,
+                            itemCount: 5,
+                            itemSize: 20.0,
+                            direction: Axis.horizontal,
+                            itemBuilder: (context, _) => Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                          ),
+                        ],
                       ),
-                    
-                  
                     ],
                   ),
                   Text(
-                    "\$${widget.product.price.toString()}",
+                    "\$${product.price.toString()}",
                     style: const TextStyle(
                       color: Colors.purple,
                       fontWeight: FontWeight.bold,
@@ -204,16 +164,18 @@ class _ProductDetailState extends State<ProductDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const ConstText(
+                    maxLine: null,
                     text: 'Color',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    textOverflow: null,
                   ),
                   const SizedBox(height: 20),
                   Row(
                     children: List.generate(
-                      widget.product.colors.length,
+                      product.colors.length,
                       (index) {
-                        final colorHex = widget.product.colors[index];
+                        final colorHex = product.colors[index];
                         final color = Color(
                             int.parse(colorHex.replaceFirst('#', '0xff')));
 
@@ -257,15 +219,46 @@ class _ProductDetailState extends State<ProductDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const ConstText(
+                        textOverflow: TextOverflow.visible,
+                        maxLine: 1,
                         text: 'About',
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
                       ),
                       const SizedBox(height: 10),
-                      ConstText(
-                        text: widget.product.description,
-                        fontSize: 15,
-                        fontWeight: FontWeight.normal,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AnimatedCrossFade(
+                            duration: Duration(milliseconds: 300),
+                            firstChild: ConstText(
+                              text: product.description,
+                              maxLine: 2,
+                              textOverflow: TextOverflow.ellipsis,
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            secondChild: ConstText(
+                              text: product.description,
+                              maxLine: null,
+                              textOverflow: null,
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            crossFadeState: seeMore
+                                ? CrossFadeState.showSecond
+                                : CrossFadeState.showFirst,
+                          ),
+                          SizedBox(height: 4),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                seeMore = !seeMore;
+                              });
+                            },
+                            child: Text(seeMore ? 'See Less' : 'See More'),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 20),
                       Row(
@@ -275,58 +268,84 @@ class _ProductDetailState extends State<ProductDetail> {
                               style: TextStyle(
                                   fontSize: 25, fontWeight: FontWeight.bold)),
                           ElevatedButton(
-                            onPressed: () => _showReviewDialog(context),
-                            child: Text('Add Review'),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddReview(
+                                    productId: product.id,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text('Add review'),
                           ),
                         ],
                       ),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: widget.product.reviews.length,
-                        itemBuilder: (context, index) {
-                          final review = widget.product.reviews[index];
-                          return ListTile(
-                            leading: CircleAvatar(
-                              child: Text(review.userName[0]),
-                            ),
-                            title: Text(review.userName),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RatingBarIndicator(
-                                  rating: review.rating,
-                                  itemCount: 5,
-                                  itemSize: 20.0,
-                                  direction: Axis.horizontal,
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
+                      reviewsToShow.isEmpty
+                          ? Center(child: Text('No reviews'))
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: reviewsToShow.length,
+                              itemBuilder: (context, index) {
+                                final review = reviewsToShow[index];
+                                return ListTile(
+                                  leading: CircleAvatar(
+                                    child: Text(review.userName[0]),
                                   ),
+                                  title: Text(review.userName),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      RatingBarIndicator(
+                                        rating: review.rating,
+                                        itemCount: 5,
+                                        itemSize: 20.0,
+                                        direction: Axis.horizontal,
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                      ),
+                                      Text(review.comment),
+                                    ],
+                                  ),
+                                  trailing: Text(
+                                    '${formatter.format(review.date.toLocal())}',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey),
+                                  ),
+                                );
+                              },
+                            ),
+                      if (product.reviews.length > 3)
+                        Center(
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      MoreReviewsScreen(reviews: sortedReviews),
                                 ),
-                                Text(review.comment),
-                              ],
-                            ),
-                            trailing: Text(
-                              '${formatter.format(review.date.toLocal())}',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.grey),
-                            ),
-                          );
-                        },
-                      ),
+                              );
+                            },
+                            child: Text('See All Reviews'),
+                          ),
+                        ),
                     ],
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 15),
-            const SizedBox(height: 15),
             Center(
               child: MyButton(
                   text: 'Add To Cart',
                   onTap: () {
-                    cart.addToCart(widget.product);
+                    cart.addToCart(product);
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -349,6 +368,7 @@ class MyButton extends StatelessWidget {
   });
   final String text;
   final Function()? onTap;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

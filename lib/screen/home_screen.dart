@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hackathon_project/screen/category_sceen.dart';
 import 'package:hackathon_project/screen/popular_product.dart';
 import 'package:hackathon_project/utils/const_text.dart';
 import 'package:provider/provider.dart';
@@ -37,34 +36,29 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     try {
       await Provider.of<ProductProvider>(context, listen: false)
-          .fetchProductsByCategory(categories[_selectedIndex]);
+          .fetchAllProducts(); // Fetch all products
     } catch (e) {
       print('Error fetching products: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
-  void _onCategoryTap(int index) async {
+  void _onCategoryTap(int index) {
     setState(() {
       _selectedIndex = index;
-      _isLoading = true;
-    });
-    try {
-      await Provider.of<ProductProvider>(context, listen: false)
-          .fetchProductsByCategory(categories[index]);
-    } catch (e) {
-      print('Error fetching products: $e');
-    }
-    setState(() {
-      _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
+
+    final filteredProducts = productProvider.products.where((product) {
+      return product.category == categories[_selectedIndex];
+    }).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -75,7 +69,14 @@ class _HomeScreenState extends State<HomeScreen> {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: TopBanner(),
+            child: Center(
+              child: Column(
+                children: [
+                  SizedBox(height: 15),
+                  TopBanner(),
+                ],
+              ),
+            ),
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -84,19 +85,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Category',
+                  const Text('Categories',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CategorySceen()),
-                      );
-                    },
-                    child: const Text('See All'),
-                  ),
                 ],
               ),
             ),
@@ -151,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => PopularProduct()),
+                            builder: (context) => AllProducts()),
                       );
                     },
                     child: const Text('See All'),
@@ -167,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
               : SliverGrid(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      final product = productProvider.products[index];
+                      final product = filteredProducts[index];
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: GestureDetector(
@@ -184,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
-                    childCount: productProvider.products.length,
+                    childCount: filteredProducts.length,
                   ),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -216,26 +207,17 @@ class TopBanner extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           child: const Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 20.0,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 30,
-                ),
-                BoldWhiteText(
-                  text: 'Nike Air Max 270',
-                  size: 25,
-                ),
+                SizedBox(height: 30),
+                BoldWhiteText(text: 'Nike Air Max 270', size: 25),
                 ConstText(
                     text: "Men's Shoes",
                     fontSize: 15,
-                    fontWeight: FontWeight.w500),
-                SizedBox(
-                  height: 20,
-                ),
+                    fontWeight: FontWeight.w500, textOverflow: null, maxLine: null,),
+                SizedBox(height: 20),
                 BoldWhiteText(text: '\$290.00', size: 25),
               ],
             ),
@@ -244,10 +226,7 @@ class TopBanner extends StatelessWidget {
         Positioned(
           right: -30,
           bottom: -90,
-          child: Image.asset(
-            'images/banner1.png',
-            height: 350,
-          ),
+          child: Image.asset('images/banner1.png', height: 350),
         )
       ],
     );
