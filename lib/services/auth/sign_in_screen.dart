@@ -18,8 +18,7 @@ class _SignInScreenState extends State<SignInScreen> {
   TextEditingController pass = TextEditingController();
   @override
   void dispose() {
-    email.dispose();
-    pass.dispose();
+  
     super.dispose();
   }
 
@@ -128,13 +127,13 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: List.generate(social.length, (index) {
                   return Container(
-                    height: 70,
-                    width: 100,
+                    height: 80,
+                    width: 90,
                     decoration: BoxDecoration(
                       boxShadow: [
                         const BoxShadow(

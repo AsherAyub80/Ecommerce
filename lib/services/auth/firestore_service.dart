@@ -16,6 +16,8 @@ class FirestoreService {
         'title': product.title,
         'quantity': product.quantity,
         'price': product.price,
+        'status':'Pending',
+
       };
     }).toList();
 

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hackathon_project/screen/order_detail.dart';
 import 'package:hackathon_project/screen/popular_product.dart';
 import 'package:hackathon_project/utils/const_text.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +9,8 @@ import 'package:hackathon_project/components/product_card.dart';
 import 'package:hackathon_project/screen/product_detail.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -24,7 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
     'Beauty',
   ];
 
-  @override
   void initState() {
     super.initState();
     _fetchProducts();
@@ -63,29 +66,39 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Home'),
-        leading: SizedBox(),
+        title: const Text('Home'),
+        leading: const SizedBox(),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => OrderDetail()));
+              },
+              icon: FaIcon(FontAwesomeIcons.basketShopping))
+        ],
       ),
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: Center(
               child: Column(
                 children: [
                   SizedBox(height: 15),
-                  TopBanner(),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: TopBanner(),
+                  ),
                 ],
               ),
             ),
           ),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10),
+              padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Categories',
+                  Text('Categories',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
                 ],
@@ -141,8 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => AllProducts()),
+                        MaterialPageRoute(builder: (context) => AllProducts()),
                       );
                     },
                     child: const Text('See All'),
@@ -152,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           _isLoading
-              ? SliverFillRemaining(
+              ? const SliverFillRemaining(
                   child: Center(child: CircularProgressIndicator()),
                 )
               : SliverGrid(
@@ -177,10 +189,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     childCount: filteredProducts.length,
                   ),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 8,
-                    childAspectRatio: 0.65,
+                    childAspectRatio: 0.60,
                   ),
                 ),
         ],
@@ -214,9 +226,12 @@ class TopBanner extends StatelessWidget {
                 SizedBox(height: 30),
                 BoldWhiteText(text: 'Nike Air Max 270', size: 25),
                 ConstText(
-                    text: "Men's Shoes",
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500, textOverflow: null, maxLine: null,),
+                  text: "Men's Shoes",
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  textOverflow: null,
+                  maxLine: null,
+                ),
                 SizedBox(height: 20),
                 BoldWhiteText(text: '\$290.00', size: 25),
               ],
@@ -224,8 +239,8 @@ class TopBanner extends StatelessWidget {
           ),
         ),
         Positioned(
-          right: -30,
-          bottom: -90,
+          right: -60,
+          bottom: -95,
           child: Image.asset('images/banner1.png', height: 350),
         )
       ],

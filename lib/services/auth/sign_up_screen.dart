@@ -69,10 +69,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   void dispose() {
     super.dispose();
-    email.dispose();
-    name.dispose();
-    pass.dispose();
-    confirmPass.dispose();
   }
 
   @override
@@ -168,13 +164,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: List.generate(social.length, (index) {
                   return Container(
-                    height: 70,
-                    width: 100,
+                    height: 80,
+                    width: 90,
                     decoration: BoxDecoration(
                       boxShadow: [
                         const BoxShadow(

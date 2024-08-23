@@ -385,7 +385,7 @@ class MyButton extends StatelessWidget {
           ),
         ),
         height: 60,
-        width: 350,
+        width: MediaQuery.of(context).size.width - 200,
         decoration: BoxDecoration(
           color: Colors.purple,
           borderRadius: BorderRadius.circular(12),

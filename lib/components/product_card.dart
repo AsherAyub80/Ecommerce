@@ -95,14 +95,13 @@ class ProductCard extends StatelessWidget {
                   SizedBox(width: 4),
 
                   Text(
-                    product.averageRating.toStringAsFixed(2),
+                    product.averageRating.toStringAsFixed(1),
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: 4),
-                  
+
                   //review count
-                  Text(
-                      ' Reviews (${product.reviews.length})'), 
+                  Text(' Reviews (${product.reviews.length})'),
                 ],
               ),
             ),
