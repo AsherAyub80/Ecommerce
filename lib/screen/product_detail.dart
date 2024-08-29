@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hackathon_project/components/product_card.dart';
 import 'package:hackathon_project/model/product_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:hackathon_project/model/review_model.dart';
@@ -59,22 +60,20 @@ class _ProductDetailState extends State<ProductDetail> {
             SafeArea(
               child: CustomAppBar(
                 barTitle: 'Product Detail',
-                trailicon: IconButton(
-                  onPressed: () {
-                    favProvider.toggleFavourite(product);
-                  },
-                  icon: Icon(
-                    favProvider.isExist(product)
-                        ? Icons.favorite
-                        : Icons.favorite_outline,
-                  ),
-                  color: Colors.red,
+                trailicon: CircleAvatar(
+                  radius: 25,
+                  backgroundColor: Colors.grey.shade300,
+                  child: FavouriteIconButton(
+                      favouriteProvider: favProvider, product: product),
                 ),
                 leadicon: InkWell(
                   onTap: () {
                     Navigator.pop(context);
                   },
-                  child: const Icon(Icons.arrow_back_ios),
+                  child: CircleAvatar(
+                      radius: 25,
+                      backgroundColor: Colors.grey.shade300,
+                      child: const Icon(Icons.arrow_back_ios)),
                 ),
               ),
             ),
@@ -343,6 +342,10 @@ class _ProductDetailState extends State<ProductDetail> {
             const SizedBox(height: 15),
             Center(
               child: MyButton(
+                              textColor: Colors.white,
+
+                  color: Colors.deepPurple,
+                  width: MediaQuery.of(context).size.width - 200,
                   text: 'Add To Cart',
                   onTap: () {
                     cart.addToCart(product);
@@ -365,9 +368,15 @@ class MyButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onTap,
+    required this.width,
+    required this.color,
+    required this.textColor,
   });
   final String text;
   final Function()? onTap;
+  final width;
+  final color;
+  final textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -377,17 +386,17 @@ class MyButton extends StatelessWidget {
         child: Center(
           child: Text(
             text,
-            style: const TextStyle(
-              color: Colors.white,
+            style:  TextStyle(
+              color:textColor,
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
           ),
         ),
         height: 60,
-        width: MediaQuery.of(context).size.width - 200,
+        width: width,
         decoration: BoxDecoration(
-          color: Colors.purple,
+          color: color,
           borderRadius: BorderRadius.circular(12),
         ),
       ),

@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hackathon_project/screen/order_detail.dart';
 import 'package:hackathon_project/screen/popular_product.dart';
+import 'package:hackathon_project/services/auth/auth_service.dart';
 import 'package:hackathon_project/utils/const_text.dart';
 import 'package:provider/provider.dart';
 import 'package:hackathon_project/provider/product_provider.dart';
@@ -16,6 +18,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Map<String, dynamic>? userDetails;
+
+  final authService = AuthService();
+  bool isLoading = true;
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  late CollectionReference users;
   int _selectedIndex = 0;
   bool _isLoading = true; // Flag for loading state
 
@@ -28,9 +38,38 @@ class _HomeScreenState extends State<HomeScreen> {
     'Beauty',
   ];
 
-  void initState() {
-    super.initState();
-    _fetchProducts();
+  Future<void> _loadUserDetails() async {
+    try {
+      final authservice = AuthService();
+      final currentUser = authservice.getCurrentUser();
+      if (currentUser != null) {
+        final email = currentUser.email;
+        if (email != null) {
+          final QuerySnapshot querySnapshot =
+              await users.where('email', isEqualTo: email).get();
+          if (querySnapshot.docs.isNotEmpty) {
+            setState(() {
+              userDetails =
+                  querySnapshot.docs.first.data() as Map<String, dynamic>;
+              isLoading = false;
+            });
+          } else {
+            throw Exception('No user data found');
+          }
+        } else {
+          throw Exception('User email is null');
+        }
+      } else {
+        throw Exception('No user is currently logged in');
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load user details: $e')),
+      );
+    }
   }
 
   Future<void> _fetchProducts() async {
@@ -49,6 +88,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void initState() {
+    super.initState();
+    _fetchProducts();
+    users = _firestore.collection('users');
+    _loadUserDetails();
+  }
+
   void _onCategoryTap(int index) {
     setState(() {
       _selectedIndex = index;
@@ -58,27 +104,65 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
+    final currentUserDetails = userDetails;
 
+    final username = currentUserDetails?['username'] ?? 'User';
     final filteredProducts = productProvider.products.where((product) {
       return product.category == categories[_selectedIndex];
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Home'),
-        leading: const SizedBox(),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => OrderDetail()));
-              },
-              icon: FaIcon(FontAwesomeIcons.basketShopping))
-        ],
-      ),
       body: CustomScrollView(
         slivers: [
+          SliverToBoxAdapter(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ConstText(
+                            text: 'Welcome back!',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            textOverflow: null,
+                            maxLine: null),
+                        Text(
+                          username[0].toUpperCase() + username.substring(1),
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Colors.grey.shade200,
+                          child: FaIcon(FontAwesomeIcons.magnifyingGlass,
+                              size: 20),
+                        ),
+                        SizedBox(width: 10),
+                        CircleAvatar(
+                          backgroundColor: Colors.grey.shade200,
+                          child: IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => OrderDetail()));
+                              },
+                              icon: Icon(Icons.shopping_cart_outlined)),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           const SliverToBoxAdapter(
             child: Center(
               child: Column(
@@ -116,12 +200,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () => _onCategoryTap(index),
                       child: Container(
                         height: 40,
-                        width: categories[index].length > 5 ? 120 : 80,
+                        width: categories.length > 5 ? 120 : 80,
                         decoration: BoxDecoration(
                           color: _selectedIndex == index
-                              ? Colors.purple
+                              ? Colors.deepPurple
                               : Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(
                           child: Text(
@@ -192,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 8,
-                    childAspectRatio: 0.60,
+                    childAspectRatio: 0.65,
                   ),
                 ),
         ],
@@ -215,7 +299,7 @@ class TopBanner extends StatelessWidget {
           height: 200,
           width: 400,
           decoration: BoxDecoration(
-            color: Colors.purple,
+            color: Colors.deepPurple,
             borderRadius: BorderRadius.circular(20),
           ),
           child: const Padding(

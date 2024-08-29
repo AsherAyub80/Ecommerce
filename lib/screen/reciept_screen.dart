@@ -169,6 +169,11 @@ class _RecieptScreenState extends State<RecieptScreen> {
                   height: 20,
                 ),
                 MyButton(
+                                                textColor: Colors.white,
+
+               color:   Colors.deepPurple,
+                          width: MediaQuery.of(context).size.width - 200,
+
                   text: 'Back to Home',
                   onTap: () {
                     Navigator.pushReplacement(

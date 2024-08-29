@@ -8,7 +8,7 @@ import 'package:hackathon_project/services/auth/auth_service.dart';
 import 'package:hackathon_project/services/auth/sign_in_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  ProfileScreen({super.key});
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return Scaffold(
+      return const Scaffold(
           body: Center(
         child: CircularProgressIndicator(),
       ));

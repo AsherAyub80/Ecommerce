@@ -10,19 +10,20 @@ class CartProvider extends ChangeNotifier {
   final List<pm.Product> _cart = [];
   List<pm.Product> get cart => _cart;
 
- void addToCart(pm.Product product) {
-  final existingProductIndex = _cart.indexWhere(
-    (element) => element.id == product.id,
-  );
+  void addToCart(pm.Product product) {
+    final existingProductIndex = _cart.indexWhere(
+      (element) => element.id == product.id,
+    );
 
-  if (existingProductIndex != -1) {
-    _cart[existingProductIndex].quantity++;
-  } else {
-    product.quantity = 1;
-    _cart.add(product);
+    if (existingProductIndex != -1) {
+      _cart[existingProductIndex].quantity++;
+    } else {
+      product.quantity = 1;
+      _cart.add(product);
+    }
+    notifyListeners();
   }
-  notifyListeners();
-}
+
   void incrementQty(int index) {
     _cart[index].quantity++;
     notifyListeners();
@@ -54,7 +55,8 @@ class CartProvider extends ChangeNotifier {
     BotToast.showLoading();
     final firestoreService = FirestoreService();
     final total = totalPrice();
-    final List<pm.Product> myCart = List.from(cart); // Create a copy of the cart
+    final List<pm.Product> myCart =
+        List.from(cart); // Create a copy of the cart
 
     try {
       // Store the order in Firestore
@@ -66,7 +68,7 @@ class CartProvider extends ChangeNotifier {
         contentColor: Colors.green,
       );
       notifyListeners();
-      
+
       Navigator.pushReplacement(
         ctx,
         MaterialPageRoute(
@@ -81,5 +83,13 @@ class CartProvider extends ChangeNotifier {
     } finally {
       BotToast.closeAllLoading();
     }
+  }
+   int getQuantity(String productId) {
+    final product = _cart.firstWhere((product) => product.id == productId, orElse: () => pm.Product(id: '', title: '', description: '', price: 0.0, seller: '', category: '', imageUrl: '', colors: [], rating: 0.0, quantity: 0, reviews: []));
+    return product.quantity;
+  }
+
+  bool isProductInCart(String productId) {
+    return _cart.any((product) => product.id == productId);
   }
 }
