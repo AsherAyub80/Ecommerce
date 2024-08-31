@@ -51,7 +51,7 @@ class CartProvider extends ChangeNotifier {
     return total;
   }
 
-  Future<void> checkout(BuildContext ctx, String user, String email) async {
+  Future<void> checkout(BuildContext ctx, String user, String email,String storeId) async {
     BotToast.showLoading();
     final firestoreService = FirestoreService();
     final total = totalPrice();
@@ -60,7 +60,7 @@ class CartProvider extends ChangeNotifier {
 
     try {
       // Store the order in Firestore
-      await firestoreService.addOrder(cart, total, user, email);
+      await firestoreService.addOrder(cart, total, user, email,storeId);
       debugPrint("Cart Length ${cart.length}");
       _cart.clear();
       BotToast.showText(
@@ -84,8 +84,22 @@ class CartProvider extends ChangeNotifier {
       BotToast.closeAllLoading();
     }
   }
-   int getQuantity(String productId) {
-    final product = _cart.firstWhere((product) => product.id == productId, orElse: () => pm.Product(id: '', title: '', description: '', price: 0.0, seller: '', category: '', imageUrl: '', colors: [], rating: 0.0, quantity: 0, reviews: []));
+
+  int getQuantity(String productId) {
+    final product = _cart.firstWhere((product) => product.id == productId,
+        orElse: () => pm.Product(
+           storeId:'',
+            id: '',
+            title: '',
+            description: '',
+            price: 0.0,
+            store: '',
+            category: '',
+            imageUrl: '',
+            colors: [],
+            rating: 0.0,
+            quantity: 0,
+            reviews: []));
     return product.quantity;
   }
 

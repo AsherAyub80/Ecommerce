@@ -2,11 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hackathon_project/model/review_model.dart';
 
 class Product {
+  final String storeId;
   final String id;
   final String title;
   final String description;
   final double price;
-  final String seller;
+  final String store;
   final String category;
   final String imageUrl;
   final List<String> colors;
@@ -15,11 +16,12 @@ class Product {
   final List<Review> reviews; // Added reviews field
 
   Product({
+    required this.storeId,
     required this.id,
     required this.title,
     required this.description,
     required this.price,
-    required this.seller,
+    required this.store,
     required this.category,
     required this.imageUrl,
     required this.colors,
@@ -39,11 +41,12 @@ class Product {
         [];
 
     return Product(
+      storeId: data['storeId'] ?? '', // Extract storeId
       id: doc.id,
       title: data['title'] ?? '',
       description: data['description'] ?? '',
       price: (data['price'] as num?)?.toDouble() ?? 0.0,
-      seller: data['seller'] ?? '',
+      store: data['store'] ?? '',
       category: data['category'] ?? '',
       imageUrl: data['image'] ?? '',
       colors: List<String>.from(data['colors'] ?? []),
@@ -52,6 +55,7 @@ class Product {
       reviews: parsedReviews,
     );
   }
+
   double get averageRating {
     if (reviews.isEmpty) return 0.0;
     double totalRating =

@@ -19,17 +19,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic>? userDetails;
-
-  final authService = AuthService();
-  bool isLoading = true;
+  final AuthService authService = AuthService();
+  bool isLoading = true; // Consolidated loading state
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   late CollectionReference users;
-  int _selectedIndex = 0;
-  bool _isLoading = true; // Flag for loading state
 
-  final categories = [
+  int _selectedIndex = 0;
+
+  final List<String> categories = [
     'Electronics',
     'Shoes',
     'Men Fashion',
@@ -38,10 +36,17 @@ class _HomeScreenState extends State<HomeScreen> {
     'Beauty',
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    users = _firestore.collection('users');
+    _fetchProducts();
+    _loadUserDetails();
+  }
+
   Future<void> _loadUserDetails() async {
     try {
-      final authservice = AuthService();
-      final currentUser = authservice.getCurrentUser();
+      final currentUser = authService.getCurrentUser();
       if (currentUser != null) {
         final email = currentUser.email;
         if (email != null) {
@@ -74,25 +79,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _fetchProducts() async {
     setState(() {
-      _isLoading = true;
+      isLoading = true;
     });
     try {
       await Provider.of<ProductProvider>(context, listen: false)
-          .fetchAllProducts(); // Fetch all products
+          .fetchAllProducts();
     } catch (e) {
       print('Error fetching products: $e');
     } finally {
       setState(() {
-        _isLoading = false;
+        isLoading = false;
       });
     }
-  }
-
-  void initState() {
-    super.initState();
-    _fetchProducts();
-    users = _firestore.collection('users');
-    _loadUserDetails();
   }
 
   void _onCategoryTap(int index) {
@@ -105,11 +103,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
     final currentUserDetails = userDetails;
-
     final username = currentUserDetails?['username'] ?? 'User';
+
     final filteredProducts = productProvider.products.where((product) {
       return product.category == categories[_selectedIndex];
     }).toList();
+
+    // Fixed item size
+    const itemSize = 150.0;
+
+    // Calculate the number of items per row
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = (screenWidth / itemSize).floor();
 
     return Scaffold(
       body: CustomScrollView(
@@ -148,13 +153,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         CircleAvatar(
                           backgroundColor: Colors.grey.shade200,
                           child: IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => OrderDetail()));
-                              },
-                              icon: Icon(Icons.shopping_cart_outlined)),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OrderDetail(),
+                                ),
+                              );
+                            },
+                            icon: Icon(Icons.shopping_cart_outlined),
+                          ),
                         ),
                       ],
                     ),
@@ -182,9 +190,10 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Categories',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+                  Text(
+                    'Categories',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
                 ],
               ),
             ),
@@ -231,9 +240,10 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Products',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+                  const Text(
+                    'Products',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
                   InkWell(
                     onTap: () {
                       Navigator.push(
@@ -247,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          _isLoading
+          isLoading
               ? const SliverFillRemaining(
                   child: Center(child: CircularProgressIndicator()),
                 )
@@ -273,10 +283,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     childCount: filteredProducts.length,
                   ),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
                     crossAxisSpacing: 8,
-                    childAspectRatio: 0.65,
+                    mainAxisSpacing: 8,
+                    childAspectRatio:
+                        itemSize / (itemSize * 1.5), // Maintain aspect ratio
                   ),
                 ),
         ],
@@ -286,9 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class TopBanner extends StatelessWidget {
-  const TopBanner({
-    super.key,
-  });
+  const TopBanner({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -339,9 +349,11 @@ class CustomAppBar extends StatelessWidget {
     required this.leadicon,
     required this.trailicon,
   });
+
   final String barTitle;
   final Widget leadicon;
   final Widget trailicon;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -367,8 +379,10 @@ class BoldWhiteText extends StatelessWidget {
     required this.text,
     required this.size,
   });
+
   final String text;
   final double size;
+
   @override
   Widget build(BuildContext context) {
     return Text(

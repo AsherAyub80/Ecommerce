@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hackathon_project/Widgets/bottom_nav.dart';
 import 'package:hackathon_project/provider/favourite_provider.dart';
-import 'package:provider/provider.dart'; 
+import 'package:provider/provider.dart';
 
 class Favourite extends StatefulWidget {
   const Favourite({
@@ -75,8 +75,7 @@ class _FavouriteState extends State<Favourite> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               padding: const EdgeInsets.all(10),
-                              child: Image.network(favouriteItem
-                                  .imageUrl), // Use Image.network for network images
+                              child: Image.network(favouriteItem.imageUrl),
                             ),
                             const SizedBox(width: 10),
                             Column(
@@ -119,7 +118,6 @@ class _FavouriteState extends State<Favourite> {
                           onPressed: () {
                             favouriteProvider.toggleFavourite(
                                 favouriteItem); // Remove item from favourites
-                            setState(() {}); // Refresh the UI
                           },
                           icon: const Icon(
                             Icons.delete,

@@ -4,7 +4,8 @@ import 'package:hackathon_project/model/product_model.dart';
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Future<void> addOrder(List<Product> cart, double totalPrice, String username, String email) async {
+  Future<void> addOrder(List<Product> cart, double totalPrice, String username,
+      String email, String storeId) async {
     final now = DateTime.now();
     final timestamp = Timestamp.fromDate(now);
 
@@ -16,8 +17,7 @@ class FirestoreService {
         'title': product.title,
         'quantity': product.quantity,
         'price': product.price,
-        'status':'Pending',
-
+        'status': 'Pending',
       };
     }).toList();
 
@@ -32,6 +32,7 @@ class FirestoreService {
       'receipt': receipt,
       'totalPrice': totalPrice,
       'items': orderDetails,
+      'storeId': storeId,
     };
 
     try {

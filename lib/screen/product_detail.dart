@@ -113,7 +113,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       Row(
                         children: [
                           const ConstText(
-                            text: 'Seller:',
+                            text: 'Store:',
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                             textOverflow: null,
@@ -121,7 +121,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           ),
                           const SizedBox(width: 5),
                           ConstText(
-                            text: product.seller,
+                            text: product.store,
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                             textOverflow: null,
@@ -340,20 +340,36 @@ class _ProductDetailState extends State<ProductDetail> {
               ),
             ),
             const SizedBox(height: 15),
-            Center(
-              child: MyButton(
-                              textColor: Colors.white,
-
-                  color: Colors.deepPurple,
-                  width: MediaQuery.of(context).size.width - 200,
-                  text: 'Add To Cart',
-                  onTap: () {
-                    cart.addToCart(product);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CartScreen()));
-                  }),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  height: 40,
+                  width: 50,
+                  child: Center(
+                    child: Icon(Icons.shopping_cart_outlined),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: MyButton(
+                      textColor: Colors.white,
+                      color: Colors.deepPurple,
+                      width: MediaQuery.of(context).size.width - 120,
+                      text: 'Buy Now',
+                      onTap: () {
+                        cart.addToCart(product);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CartScreen()));
+                      }),
+                ),
+              ],
             ),
             const SizedBox(height: 15),
           ],
@@ -386,8 +402,8 @@ class MyButton extends StatelessWidget {
         child: Center(
           child: Text(
             text,
-            style:  TextStyle(
-              color:textColor,
+            style: TextStyle(
+              color: textColor,
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),

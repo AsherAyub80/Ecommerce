@@ -15,10 +15,10 @@ class BottomNav extends StatefulWidget {
 
 class _BottomNavState extends State<BottomNav> {
   final List screens = [
-    HomeScreen(),
+    const HomeScreen(),
     const Favourite(),
     const CartScreen(),
-    ProfileScreen(),
+    const ProfileScreen(),
   ];
   int currentIndex = 0;
   void resetToFirstTab() {
@@ -31,11 +31,11 @@ class _BottomNavState extends State<BottomNav> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
+        padding: const EdgeInsets.only(left: 30, right: 30, bottom: 5),
         child: Container(
           decoration: BoxDecoration(
               color: Colors.deepPurple,
-              borderRadius: BorderRadius.circular(15)),
+              borderRadius: BorderRadius.circular(12)),
           height: 60,
           child: Column(
             children: [
