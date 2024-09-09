@@ -51,44 +51,45 @@ class CartProvider extends ChangeNotifier {
     return total;
   }
 
-  Future<void> checkout(BuildContext ctx, String user, String email,String storeId) async {
-    BotToast.showLoading();
-    final firestoreService = FirestoreService();
-    final total = totalPrice();
-    final List<pm.Product> myCart =
-        List.from(cart); // Create a copy of the cart
+ Future<void> checkout(
+    BuildContext ctx, String user, String email, String storeId, String address) async {
+  BotToast.showLoading();
+  final firestoreService = FirestoreService();
+  final total = totalPrice();
+  final List<pm.Product> myCart =
+      List.from(cart); // Create a copy of the cart
 
-    try {
-      // Store the order in Firestore
-      await firestoreService.addOrder(cart, total, user, email,storeId);
-      debugPrint("Cart Length ${cart.length}");
-      _cart.clear();
-      BotToast.showText(
-        text: "Order Placed!",
-        contentColor: Colors.green,
-      );
-      notifyListeners();
+  try {
+    // Store the order in Firestore
+    await firestoreService.addOrder(cart, total, user, email, storeId, address);
+    _cart.clear();
+    BotToast.showText(
+      text: "Order Placed!",
+      contentColor: Colors.green,
+    );
+    notifyListeners();
 
-      Navigator.pushReplacement(
-        ctx,
-        MaterialPageRoute(
-          builder: (context) => RecieptScreen(listCart: myCart),
-        ),
-      );
-    } catch (e) {
-      BotToast.showText(
-        text: "Failed to place order: $e",
-        contentColor: Colors.red,
-      );
-    } finally {
-      BotToast.closeAllLoading();
-    }
+    Navigator.pushReplacement(
+      ctx,
+      MaterialPageRoute(
+        builder: (context) => RecieptScreen(listCart: myCart),
+      ),
+    );
+  } catch (e) {
+    BotToast.showText(
+      text: "Failed to place order: $e",
+      contentColor: Colors.red,
+    );
+  } finally {
+    BotToast.closeAllLoading();
   }
+}
+
 
   int getQuantity(String productId) {
     final product = _cart.firstWhere((product) => product.id == productId,
         orElse: () => pm.Product(
-           storeId:'',
+            storeId: '',
             id: '',
             title: '',
             description: '',

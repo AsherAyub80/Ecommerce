@@ -5,7 +5,7 @@ class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   Future<void> addOrder(List<Product> cart, double totalPrice, String username,
-      String email, String storeId) async {
+      String email, String storeId, String address) async {
     final now = DateTime.now();
     final timestamp = Timestamp.fromDate(now);
 
@@ -17,7 +17,6 @@ class FirestoreService {
         'title': product.title,
         'quantity': product.quantity,
         'price': product.price,
-        'status': 'Pending',
       };
     }).toList();
 
@@ -33,12 +32,13 @@ class FirestoreService {
       'totalPrice': totalPrice,
       'items': orderDetails,
       'storeId': storeId,
+      'address': address,  // Store address with the order
+      'status': 'Pending',
     };
 
     try {
       await _db.collection('orders').add(orderData);
     } catch (e) {
-      // Handle any errors that occur during the Firestore write operation
       print('Failed to add order: $e');
       throw Exception('Failed to add order');
     }

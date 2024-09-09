@@ -6,10 +6,9 @@ class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   // Get current user
-   User? getCurrentUser() {
+  User? getCurrentUser() {
     return _firebaseAuth.currentUser;
   }
-
 
   Future<Map<String, dynamic>?> loadCurrentUserDetails() async {
     try {
@@ -28,7 +27,8 @@ class AuthService {
         throw Exception('User document does not exist.');
       }
 
-      return userDoc.data(); // Returns a Map<String, dynamic> containing user details
+      return userDoc
+          .data(); // Returns a Map<String, dynamic> containing user details
     } on FirebaseAuthException catch (e) {
       // Handle specific FirebaseAuthException
       throw Exception('Failed to load user details: ${e.message}');
@@ -57,18 +57,21 @@ class AuthService {
 
   // Sign up with email and password
   Future<UserCredential> signUpWithEmailPassword(
-      String email, String password,String name) async {
+    String email,
+    String password,
+    String name,
+  ) async {
     try {
       // Attempt to sign up user
       UserCredential userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
-         await FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('users')
           .doc(userCredential.user!.uid)
           .set({
         'username': name,
         'email': email,
-        
+        'Address': [],
       });
       return userCredential;
     } on FirebaseAuthException catch (e) {

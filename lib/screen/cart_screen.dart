@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hackathon_project/Widgets/bottom_nav.dart';
 import 'package:hackathon_project/model/product_model.dart';
 import 'package:hackathon_project/provider/provider.dart';
+import 'package:hackathon_project/screen/checkoutProcess/checkout_screen.dart';
 import 'package:hackathon_project/screen/home_screen.dart';
 import 'package:hackathon_project/services/auth/auth_service.dart';
 import 'package:hackathon_project/utils/const_text.dart';
@@ -142,33 +143,10 @@ class _CartScreenState extends State<CartScreen> {
       bottomNavigationBar: CheckoutCard(
         totalPrice: provider.totalPrice(),
         onCheckout: () async {
-          if (userDetails == null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Unable to fetch user details.')),
-            );
-            return;
-          }
-
-          final email = userDetails!['email'] as String;
-          final username = userDetails!['username'] as String;
-
-          final storeId =
-              provider.cart.isNotEmpty ? provider.cart.first.storeId : null;
-
-          if (storeId == null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Unable to determine store.')),
-            );
-            return;
-          }
-
-          try {
-            await provider.checkout(context, username, email, storeId);
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Checkout failed: $e')),
-            );
-          }
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddressSelectionScreen()));
         },
       ),
     );
