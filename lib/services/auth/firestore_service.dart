@@ -32,7 +32,7 @@ class FirestoreService {
       'totalPrice': totalPrice,
       'items': orderDetails,
       'storeId': storeId,
-      'address': address,  // Store address with the order
+      'address': address, // Store address with the order
       'status': 'Pending',
     };
 
