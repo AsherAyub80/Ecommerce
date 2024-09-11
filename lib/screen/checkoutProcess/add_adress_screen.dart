@@ -8,6 +8,7 @@ class AddAddressScreen extends StatefulWidget {
 }
 
 class _AddAddressScreenState extends State<AddAddressScreen> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _streetController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
@@ -19,56 +20,114 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       appBar: AppBar(title: Text('Add Address')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Street'),
-            TextField(controller: _streetController),
-            SizedBox(height: 16),
-            Text('City'),
-            TextField(controller: _cityController),
-            SizedBox(height: 16),
-            Text('State'),
-            TextField(controller: _stateController),
-            SizedBox(height: 16),
-            Text('ZIP Code'),
-            TextField(controller: _zipController),
-            Spacer(),
-            ElevatedButton(
-              onPressed: () async {
-                final authService = AuthService();
-                final currentUser = authService.getCurrentUser();
-                if (currentUser != null) {
-                  final userId = currentUser.uid;
-                  try {
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(userId)
-                        .update({
-                      'Address': FieldValue.arrayUnion([
-                        {
-                          'street': _streetController.text,
-                          'city': _cityController.text,
-                          'state': _stateController.text,
-                          'zip': _zipController.text,
-                        }
-                      ])
-                    });
-                    Navigator.pop(context);
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to add address: $e')),
-                    );
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Street', style: TextStyle(color: Colors.grey.shade500)),
+              TextFormField(
+                controller: _streetController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter street address',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter street address';
                   }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('User not logged in')),
-                  );
-                }
-              },
-              child: Text('Save Address'),
-            ),
-          ],
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+              Text('City', style: TextStyle(color: Colors.grey.shade500)),
+              TextFormField(
+                controller: _cityController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter city',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter city';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+              Text('State', style: TextStyle(color: Colors.grey.shade500)),
+              TextFormField(
+                controller: _stateController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter state',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter state';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+              Text('ZIP Code', style: TextStyle(color: Colors.grey.shade500)),
+              TextFormField(
+                controller: _zipController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter ZIP code',
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter ZIP code';
+                  }
+                  return null;
+                },
+              ),
+              Spacer(),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      final authService = AuthService();
+                      final currentUser = authService.getCurrentUser();
+                      if (currentUser != null) {
+                        final userId = currentUser.uid;
+                        try {
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(userId)
+                              .update({
+                            'Address': FieldValue.arrayUnion([
+                              {
+                                'street': _streetController.text,
+                                'city': _cityController.text,
+                                'state': _stateController.text,
+                                'zip': _zipController.text,
+                              }
+                            ])
+                          });
+                          Navigator.pop(context);
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Failed to add address: $e')),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('User not logged in')),
+                        );
+                      }
+                    }
+                  },
+                  child: Text('Save Address'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
