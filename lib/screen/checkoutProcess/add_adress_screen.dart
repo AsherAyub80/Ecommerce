@@ -22,111 +22,115 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Street', style: TextStyle(color: Colors.grey.shade500)),
-              TextFormField(
-                controller: _streetController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter street address',
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Street', style: TextStyle(color: Colors.grey.shade500)),
+                TextFormField(
+                  controller: _streetController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter street address',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter street address';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter street address';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              Text('City', style: TextStyle(color: Colors.grey.shade500)),
-              TextFormField(
-                controller: _cityController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter city',
+                SizedBox(height: 16),
+                Text('City', style: TextStyle(color: Colors.grey.shade500)),
+                TextFormField(
+                  controller: _cityController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter city',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter city';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter city';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              Text('State', style: TextStyle(color: Colors.grey.shade500)),
-              TextFormField(
-                controller: _stateController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter state',
+                SizedBox(height: 16),
+                Text('State', style: TextStyle(color: Colors.grey.shade500)),
+                TextFormField(
+                  controller: _stateController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter state',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter state';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter state';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              Text('ZIP Code', style: TextStyle(color: Colors.grey.shade500)),
-              TextFormField(
-                controller: _zipController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter ZIP code',
+                SizedBox(height: 16),
+                Text('ZIP Code', style: TextStyle(color: Colors.grey.shade500)),
+                TextFormField(
+                  controller: _zipController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter ZIP code',
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter ZIP code';
+                    }
+                    return null;
+                  },
                 ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter ZIP code';
-                  }
-                  return null;
-                },
-              ),
-              Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      final authService = AuthService();
-                      final currentUser = authService.getCurrentUser();
-                      if (currentUser != null) {
-                        final userId = currentUser.uid;
-                        try {
-                          await FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(userId)
-                              .update({
-                            'Address': FieldValue.arrayUnion([
-                              {
-                                'street': _streetController.text,
-                                'city': _cityController.text,
-                                'state': _stateController.text,
-                                'zip': _zipController.text,
-                              }
-                            ])
-                          });
-                          Navigator.pop(context);
-                        } catch (e) {
+                SizedBox(
+                  height: 170,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        final authService = AuthService();
+                        final currentUser = authService.getCurrentUser();
+                        if (currentUser != null) {
+                          final userId = currentUser.uid;
+                          try {
+                            await FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(userId)
+                                .update({
+                              'Address': FieldValue.arrayUnion([
+                                {
+                                  'street': _streetController.text,
+                                  'city': _cityController.text,
+                                  'state': _stateController.text,
+                                  'zip': _zipController.text,
+                                }
+                              ])
+                            });
+                            Navigator.pop(context);
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text('Failed to add address: $e')),
+                            );
+                          }
+                        } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Failed to add address: $e')),
+                            SnackBar(content: Text('User not logged in')),
                           );
                         }
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('User not logged in')),
-                        );
                       }
-                    }
-                  },
-                  child: Text('Save Address'),
+                    },
+                    child: Text('Save Address'),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

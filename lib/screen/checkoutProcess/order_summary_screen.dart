@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hackathon_project/provider/provider.dart';
 import 'package:hackathon_project/screen/checkoutProcess/payment_screen.dart';
 import 'package:hackathon_project/services/auth/auth_service.dart';
+import 'package:hackathon_project/stepperWidget/stepper.dart';
 import 'package:provider/provider.dart';
 
 class OrderSummaryScreen extends StatelessWidget {
@@ -90,102 +91,123 @@ class OrderSummaryScreen extends StatelessWidget {
               'Order Summary',
               style: TextStyle(color: Colors.white),
             ),
+            iconTheme: IconThemeData(color: Colors.white),
             centerTitle: true,
             backgroundColor: Colors.deepPurple,
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Address',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
-                  ),
+          body: Column(
+            children: [
+              Container(
+                color: Colors.grey[200],
+                child: StepperHeader(
+                  stepIcons: [
+                    Icons.shopping_cart,
+                    Icons.location_city,
+                    Icons.summarize,
+                    Icons.payment,
+                  ],
+                  currentStep: 2,
+                  steps: ['Cart', 'Address', 'Summary', 'Payment'],
                 ),
-                SizedBox(height: 8),
-                Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      address,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Address',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepPurple,
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Order Summary',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: cartItems.length,
-                    separatorBuilder: (context, index) => Divider(),
-                    itemBuilder: (context, index) {
-                      var item = cartItems[index];
-                      return ListTile(
-                        contentPadding: EdgeInsets.symmetric(vertical: 8.0),
-                        title: Text(
-                          item.title,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        subtitle: Text(
-                          'Quantity: ${item.quantity.toString()}',
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                        trailing: Text(
-                          '\$${item.price.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.deepPurple,
+                      SizedBox(height: 8),
+                      Card(
+                        elevation: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            address,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black87,
+                            ),
                           ),
                         ),
-                      );
-                    },
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Order Summary',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepPurple,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Expanded(
+                        child: ListView.separated(
+                          itemCount: cartItems.length,
+                          separatorBuilder: (context, index) => Divider(),
+                          itemBuilder: (context, index) {
+                            var item = cartItems[index];
+                            return ListTile(
+                              contentPadding:
+                                  EdgeInsets.symmetric(vertical: 8.0),
+                              title: Text(
+                                item.title,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              subtitle: Text(
+                                'Quantity: ${item.quantity.toString()}',
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
+                              trailing: Text(
+                                '\$${item.price.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.deepPurple,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Total:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '\$${total.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Total:',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '\$${total.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepPurple,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) => PaymentScreen(
