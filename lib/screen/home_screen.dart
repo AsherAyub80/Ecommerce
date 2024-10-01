@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -297,50 +299,97 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class TopBanner extends StatelessWidget {
+
+class TopBanner extends StatefulWidget {
   const TopBanner({super.key});
 
   @override
+  _TopBannerState createState() => _TopBannerState();
+}
+
+class _TopBannerState extends State<TopBanner> {
+  final PageController _pageController = PageController();
+  Timer? _timer;
+  List<String> imageUrls = []; // Declare imageUrls here
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _startAutoSwipe() {
+    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+      if (_pageController.hasClients && imageUrls.isNotEmpty) {
+        int currentPage = _pageController.page!.round();
+        int nextPage = currentPage + 1;
+
+        if (nextPage >= imageUrls.length) {
+          // Reset to first page if at the end
+          nextPage = 0;
+        }
+
+        _pageController.animateToPage(
+          nextPage,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          height: 200,
-          width: 400,
-          decoration: BoxDecoration(
-            color: Colors.deepPurple,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 30),
-                BoldWhiteText(text: 'Nike Air Max 270', size: 25),
-                ConstText(
-                  text: "Men's Shoes",
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  textOverflow: null,
-                  maxLine: null,
-                ),
-                SizedBox(height: 20),
-                BoldWhiteText(text: '\$290.00', size: 25),
-              ],
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('promotions').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Center(child: Text('No promotions available.'));
+        }
+
+        // Collect image URLs from the documents and set the state
+        imageUrls = snapshot.data!.docs.map((doc) => doc['image'] as String).toList();
+
+        // Start the auto swipe only when we have images and the timer is not already running
+        if (_timer == null && imageUrls.isNotEmpty) {
+          _startAutoSwipe();
+        }
+
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            height: 200,
+            width: double.infinity, // Make it responsive
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: imageUrls.length,
+              itemBuilder: (context, index) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: Image.network(imageUrls[index], fit: BoxFit.cover),
+                );
+              },
             ),
           ),
-        ),
-        Positioned(
-          right: -60,
-          bottom: -95,
-          child: Image.asset('images/banner1.png', height: 350),
-        )
-      ],
+        );
+      },
     );
   }
 }
+
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({

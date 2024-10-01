@@ -61,31 +61,32 @@ class _MoreReviewsScreenState extends State<MoreReviewsScreen> {
         border: Border.all(color: Colors.grey.shade400),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        leading: CircleAvatar(
-          child: Text(review.userName[0]),
-        ),
-        title: Text(review.userName),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            RatingBarIndicator(
-              rating: review.rating,
-              itemCount: 5,
-              itemSize: 20.0,
-              direction: Axis.horizontal,
-              itemBuilder: (context, _) => Icon(
-                Icons.star,
-                color: Colors.amber,
+      child: Card(
+        child: ListTile(
+          leading: CircleAvatar(
+            child: Text(review.userName[0]),
+          ),
+          title: Text(review.userName),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RatingBarIndicator(
+                rating: review.rating,
+                itemCount: 5,
+                itemSize: 20.0,
+                direction: Axis.horizontal,
+                itemBuilder: (context, _) => Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
               ),
-            ),
-            Text(review.comment),
-          ],
-        ),
-        trailing: Text(
-          '${formatter.format(review.date.toLocal())}',
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+              Text(review.comment),
+            ],
+          ),
+          trailing: Text(
+            '${formatter.format(review.date.toLocal())}',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          ),
         ),
       ),
     );

@@ -249,14 +249,15 @@ class _ProductDetailState extends State<ProductDetail> {
                                 : CrossFadeState.showFirst,
                           ),
                           SizedBox(height: 4),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                seeMore = !seeMore;
-                              });
-                            },
-                            child: Text(seeMore ? 'See Less' : 'See More'),
-                          ),
+                          if (product.description.split('\n').length > 3)
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  seeMore = !seeMore;
+                                });
+                              },
+                              child: Text(seeMore ? 'See Less' : 'See More'),
+                            ),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -267,6 +268,9 @@ class _ProductDetailState extends State<ProductDetail> {
                               style: TextStyle(
                                   fontSize: 25, fontWeight: FontWeight.bold)),
                           ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.deepPurple,
+                                foregroundColor: Colors.white),
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -289,33 +293,40 @@ class _ProductDetailState extends State<ProductDetail> {
                               itemCount: reviewsToShow.length,
                               itemBuilder: (context, index) {
                                 final review = reviewsToShow[index];
-                                return ListTile(
-                                  leading: CircleAvatar(
-                                    child: Text(review.userName[0]),
-                                  ),
-                                  title: Text(review.userName),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      RatingBarIndicator(
-                                        rating: review.rating,
-                                        itemCount: 5,
-                                        itemSize: 20.0,
-                                        direction: Axis.horizontal,
-                                        itemBuilder: (context, _) => Icon(
-                                          Icons.star,
-                                          color: Colors.amber,
+                                return Column(
+                                  children: [
+                                    Card(
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                          child: Text(review.userName[0]),
+                                        ),
+                                        title: Text(review.userName),
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            RatingBarIndicator(
+                                              rating: review.rating,
+                                              itemCount: 5,
+                                              itemSize: 20.0,
+                                              direction: Axis.horizontal,
+                                              itemBuilder: (context, _) => Icon(
+                                                Icons.star,
+                                                color: Colors.amber,
+                                              ),
+                                            ),
+                                            Text(review.comment),
+                                          ],
+                                        ),
+                                        trailing: Text(
+                                          '${formatter.format(review.date.toLocal())}',
+                                          style: TextStyle(
+                                              fontSize: 12, color: Colors.grey),
                                         ),
                                       ),
-                                      Text(review.comment),
-                                    ],
-                                  ),
-                                  trailing: Text(
-                                    '${formatter.format(review.date.toLocal())}',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.grey),
-                                  ),
+                                    ),
+                                    Divider(),
+                                  ],
                                 );
                               },
                             ),
@@ -343,15 +354,23 @@ class _ProductDetailState extends State<ProductDetail> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  height: 40,
-                  width: 50,
-                  child: Center(
-                    child: Icon(Icons.shopping_cart_outlined),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CartScreen()));
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    height: 40,
+                    width: 50,
+                    child: Center(
+                      child: Icon(Icons.shopping_cart_outlined),
+                    ),
                   ),
                 ),
                 Padding(
@@ -362,11 +381,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       width: MediaQuery.of(context).size.width - 120,
                       text: 'Buy Now',
                       onTap: () {
-                        cart.addToCart(product);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CartScreen()));
+                        cart.addToCart(product, context);
                       }),
                 ),
               ],

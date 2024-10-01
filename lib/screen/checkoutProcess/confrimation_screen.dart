@@ -7,8 +7,7 @@ class ConfirmationScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Order Confirmation'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -39,7 +38,7 @@ class ConfirmationScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.popUntil(context, (route) => route.isFirst);
               },
-              child: Text('Back to Home'),
+              child: Text('Go to Home'),
             ),
           ],
         ),

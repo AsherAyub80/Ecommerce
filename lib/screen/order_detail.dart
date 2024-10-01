@@ -43,18 +43,34 @@ class OrderDetail extends StatelessWidget {
               }).toList();
 
               return Card(
+                margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: ListTile(
-                    title: Text(order['receipt']),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: userItems.map((item) {
-                        return Text(
-                            'Item: ${item['title']}\nStatus: ${item['status']}');
-                      }).toList(),
-                    ),
-                    trailing: Text('Total: \$${order['totalPrice']}'),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                        title: Text(order['receipt'] ?? 'Order Receipt'),
+                        trailing: Text('Total: \$${order['totalPrice']}',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                      SizedBox(
+                          height:
+                              8.0), // Add some space between the title and items
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: userItems.map((item) {
+                          return Text(
+                              'Item: ${item['title']} (Qty: ${item['quantity']})');
+                        }).toList(),
+                      ),
+                      SizedBox(height: 8.0), // Add some space before the status
+                      Text(
+                        'Status: ${order['status'] ?? 'N/A'}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.orange),
+                      ),
+                    ],
                   ),
                 ),
               );
