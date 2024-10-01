@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:hackathon_project/provider/favourite_provider.dart';
+import 'package:hackathon_project/provider/page_view_provider.dart';
 import 'package:hackathon_project/provider/product_provider.dart';
 import 'package:hackathon_project/provider/provider.dart';
 import 'package:hackathon_project/screen/checkoutProcess/payment/payment_provider.dart';
@@ -32,6 +33,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (_) => CartProvider(),
+        ),
+          ChangeNotifierProvider(
+          create: (_) => PageIndexProvider(),
         ),
        
         ChangeNotifierProvider(

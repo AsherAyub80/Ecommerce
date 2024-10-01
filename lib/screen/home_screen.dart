@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hackathon_project/provider/page_view_provider.dart';
 import 'package:hackathon_project/screen/order_detail.dart';
 import 'package:hackathon_project/screen/popular_product.dart';
 import 'package:hackathon_project/services/auth/auth_service.dart';
@@ -299,7 +300,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-
 class TopBanner extends StatefulWidget {
   const TopBanner({super.key});
 
@@ -310,7 +310,7 @@ class TopBanner extends StatefulWidget {
 class _TopBannerState extends State<TopBanner> {
   final PageController _pageController = PageController();
   Timer? _timer;
-  List<String> imageUrls = []; // Declare imageUrls here
+  List<String> imageUrls = [];
 
   @override
   void initState() {
@@ -324,7 +324,6 @@ class _TopBannerState extends State<TopBanner> {
         int nextPage = currentPage + 1;
 
         if (nextPage >= imageUrls.length) {
-          // Reset to first page if at the end
           nextPage = 0;
         }
 
@@ -333,6 +332,10 @@ class _TopBannerState extends State<TopBanner> {
           duration: Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
+
+        // Update the page index in the provider
+        Provider.of<PageIndexProvider>(context, listen: false)
+            .updatePage(nextPage);
       }
     });
   }
@@ -357,39 +360,68 @@ class _TopBannerState extends State<TopBanner> {
           return Center(child: Text('No promotions available.'));
         }
 
-        // Collect image URLs from the documents and set the state
-        imageUrls = snapshot.data!.docs.map((doc) => doc['image'] as String).toList();
+        imageUrls =
+            snapshot.data!.docs.map((doc) => doc['image'] as String).toList();
 
-        // Start the auto swipe only when we have images and the timer is not already running
         if (_timer == null && imageUrls.isNotEmpty) {
           _startAutoSwipe();
         }
 
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            height: 200,
-            width: double.infinity, // Make it responsive
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: imageUrls.length,
+                  itemBuilder: (context, index) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: Image.network(imageUrls[index], fit: BoxFit.cover),
+                    );
+                  },
+                  onPageChanged: (index) {
+                    // Update the current page in the provider when the user swipes
+                    Provider.of<PageIndexProvider>(context, listen: false)
+                        .updatePage(index);
+                  },
+                ),
+              ),
             ),
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: imageUrls.length,
-              itemBuilder: (context, index) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(20.0),
-                  child: Image.network(imageUrls[index], fit: BoxFit.cover),
+            Consumer<PageIndexProvider>(
+              builder: (context, pageIndexProvider, child) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(imageUrls.length, (index) {
+                    return AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      margin: EdgeInsets.symmetric(horizontal: 4.0),
+                      width:
+                          pageIndexProvider.currentPage == index ? 18.0 : 8.0,
+                      height: 8.0,
+                      decoration: BoxDecoration(
+                        color: pageIndexProvider.currentPage == index
+                            ? Colors.deepPurple
+                            : Colors.grey,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    );
+                  }),
                 );
               },
             ),
-          ),
+          ],
         );
       },
     );
   }
 }
-
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({
