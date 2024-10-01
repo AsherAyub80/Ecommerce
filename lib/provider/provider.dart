@@ -10,7 +10,7 @@ class CartProvider extends ChangeNotifier {
   final List<pm.Product> _cart = [];
   List<pm.Product> get cart => _cart;
 
-  void addToCart(pm.Product product) {
+  void addToCart(pm.Product product, context) {
     final existingProductIndex = _cart.indexWhere(
       (element) => element.id == product.id,
     );
@@ -22,6 +22,10 @@ class CartProvider extends ChangeNotifier {
       _cart.add(product);
     }
     notifyListeners();
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Product Added to cart'),
+        duration: Duration(seconds: 1)));
   }
 
   void incrementQty(int index) {
@@ -51,40 +55,53 @@ class CartProvider extends ChangeNotifier {
     return total;
   }
 
- Future<void> checkout(
-    BuildContext ctx, String user, String email, String storeId, String address) async {
-  BotToast.showLoading();
-  final firestoreService = FirestoreService();
-  final total = totalPrice();
-  final List<pm.Product> myCart =
-      List.from(cart); // Create a copy of the cart
+  Future<void> checkout(
+    BuildContext ctx,
+    String user,
+    String email,
+    String storeId,
+    String address,
+    String paymentMethod, // New parameter
+  ) async {
+    BotToast.showLoading();
+    final firestoreService = FirestoreService();
+    final total = totalPrice();
+    final List<pm.Product> myCart =
+        List.from(cart); // Create a copy of the cart
 
-  try {
-    // Store the order in Firestore
-    await firestoreService.addOrder(cart, total, user, email, storeId, address);
-    _cart.clear();
-    BotToast.showText(
-      text: "Order Placed!",
-      contentColor: Colors.green,
-    );
-    notifyListeners();
+    try {
+      // Store the order in Firestore with the payment method
+      await firestoreService.addOrder(
+        cart,
+        total,
+        user,
+        email,
+        storeId,
+        address,
+        paymentMethod, // Pass the payment method
+      );
+      _cart.clear();
+      BotToast.showText(
+        text: "Order Placed!",
+        contentColor: Colors.green,
+      );
+      notifyListeners();
 
-    Navigator.pushReplacement(
-      ctx,
-      MaterialPageRoute(
-        builder: (context) => RecieptScreen(listCart: myCart),
-      ),
-    );
-  } catch (e) {
-    BotToast.showText(
-      text: "Failed to place order: $e",
-      contentColor: Colors.red,
-    );
-  } finally {
-    BotToast.closeAllLoading();
+      Navigator.pushReplacement(
+        ctx,
+        MaterialPageRoute(
+          builder: (context) => RecieptScreen(listCart: myCart),
+        ),
+      );
+    } catch (e) {
+      BotToast.showText(
+        text: "Failed to place order: $e",
+        contentColor: Colors.red,
+      );
+    } finally {
+      BotToast.closeAllLoading();
+    }
   }
-}
-
 
   int getQuantity(String productId) {
     final product = _cart.firstWhere((product) => product.id == productId,

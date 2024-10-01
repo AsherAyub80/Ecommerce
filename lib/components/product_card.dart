@@ -149,7 +149,7 @@ class ProductCard extends StatelessWidget {
       child: IconButton(
         icon: const Icon(Icons.add, color: Colors.deepPurple),
         onPressed: () {
-          cartProvider.addToCart(product);
+          cartProvider.addToCart(product,context);
         },
       ),
     );
