@@ -81,6 +81,10 @@ class _ProductDetailState extends State<ProductDetail> {
               tag: product.imageUrl,
               child: Container(
                 height: 200,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
                 child: Center(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(100),
@@ -89,10 +93,6 @@ class _ProductDetailState extends State<ProductDetail> {
                       fit: BoxFit.fill,
                     ),
                   ),
-                ),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
                 ),
               ),
             ),

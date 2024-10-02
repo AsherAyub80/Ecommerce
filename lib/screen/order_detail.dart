@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hackathon_project/screen/orderTrack/order_track.dart';
 
 class OrderDetail extends StatelessWidget {
   @override
@@ -42,35 +43,44 @@ class OrderDetail extends StatelessWidget {
                 return item['email'] == currentUser!.email;
               }).toList();
 
-              return Card(
-                margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ListTile(
-                        title: Text(order['receipt'] ?? 'Order Receipt'),
-                        trailing: Text('Total: \$${order['totalPrice']}',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      SizedBox(
-                          height:
-                              8.0), // Add some space between the title and items
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: userItems.map((item) {
-                          return Text(
-                              'Item: ${item['title']} (Qty: ${item['quantity']})');
-                        }).toList(),
-                      ),
-                      SizedBox(height: 8.0), // Add some space before the status
-                      Text(
-                        'Status: ${order['status'] ?? 'N/A'}',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.orange),
-                      ),
-                    ],
+              return GestureDetector(
+                onTap: () {
+                  // Navigate to OrderTracking with the selected order data
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => OrderTracking(orderData: order),
+                    ),
+                  );
+                },
+                child: Card(
+                  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ListTile(
+                          title: Text(order['receipt'] ?? 'Order Receipt'),
+                          trailing: Text('Total: \$${order['totalPrice']}',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                        SizedBox(height: 8.0), // Add some space between the title and items
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: userItems.map((item) {
+                            return Text(
+                                'Item: ${item['title']} (Qty: ${item['quantity']})');
+                          }).toList(),
+                        ),
+                        SizedBox(height: 8.0), // Add some space before the status
+                        Text(
+                          'Status: ${order['status'] ?? 'N/A'}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.orange),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );

@@ -3,6 +3,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:hackathon_project/model/product_model.dart' as pm;
+import 'package:hackathon_project/provider/product_provider.dart';
 import 'package:hackathon_project/screen/reciept_screen.dart';
 import 'package:hackathon_project/services/auth/firestore_service.dart';
 
@@ -56,52 +57,65 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future<void> checkout(
-    BuildContext ctx,
-    String user,
-    String email,
-    String storeId,
-    String address,
-    String paymentMethod, // New parameter
-  ) async {
-    BotToast.showLoading();
-    final firestoreService = FirestoreService();
-    final total = totalPrice();
-    final List<pm.Product> myCart =
-        List.from(cart); // Create a copy of the cart
+  BuildContext ctx,
+  String user,
+  String email,
+  String storeId,
+  String address,
+  String paymentMethod,
+ 
+) async {
+  BotToast.showLoading();
+  final firestoreService = FirestoreService();
+  final total = totalPrice();
+  final List<pm.Product> myCart = List.from(cart); // Create a copy of the cart
 
-    try {
-      // Store the order in Firestore with the payment method
-      await firestoreService.addOrder(
-        cart,
-        total,
-        user,
-        email,
-        storeId,
-        address,
-        paymentMethod, // Pass the payment method
-      );
-      _cart.clear();
-      BotToast.showText(
-        text: "Order Placed!",
-        contentColor: Colors.green,
-      );
-      notifyListeners();
+  try {
+    // Fetch store details
+    final productProvider = ProductProvider();
+    final storeDetails = await productProvider.fetchStoreDetails(storeId);
 
-      Navigator.pushReplacement(
-        ctx,
-        MaterialPageRoute(
-          builder: (context) => RecieptScreen(listCart: myCart),
-        ),
-      );
-    } catch (e) {
-      BotToast.showText(
-        text: "Failed to place order: $e",
-        contentColor: Colors.red,
-      );
-    } finally {
-      BotToast.closeAllLoading();
-    }
+    // Prepare store location
+    final storeLocation = {
+      'lat': storeDetails['lat'],
+      'lng': storeDetails['lng'],
+      
+    };
+
+    // Store the order in Firestore with the payment method and store location
+    await firestoreService.addOrder(
+      cart,
+      total,
+      user,
+      email,
+      storeId,
+      address,
+      paymentMethod, // Pass the payment method
+      storeLocation, // Pass the store location
+    );
+
+    _cart.clear();
+    BotToast.showText(
+      text: "Order Placed!",
+      contentColor: Colors.green,
+    );
+    notifyListeners();
+
+    Navigator.pushReplacement(
+      ctx,
+      MaterialPageRoute(
+        builder: (context) => RecieptScreen(listCart: myCart),
+      ),
+    );
+  } catch (e) {
+    BotToast.showText(
+      text: "Failed to place order: $e",
+      contentColor: Colors.red,
+    );
+  } finally {
+    BotToast.closeAllLoading();
   }
+}
 
   int getQuantity(String productId) {
     final product = _cart.firstWhere((product) => product.id == productId,

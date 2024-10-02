@@ -5,7 +5,6 @@ import 'package:hackathon_project/screen/home_screen.dart';
 import 'package:hackathon_project/screen/order_detail.dart';
 import 'package:hackathon_project/services/auth/auth_gate.dart';
 import 'package:hackathon_project/services/auth/auth_service.dart';
-import 'package:hackathon_project/services/auth/sign_in_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -100,26 +99,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(height: 50),
           Column(
             children: [
-              ListTile(
-                leading: CircleAvatar(
-                  radius: 30,
-                  child: Text(
-                    username[0],
-                    style: TextStyle(fontSize: 20),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 30,
+                      child: Text(
+                        username[0],
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    title: Text(
+                      username,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(email),
+                      ],
+                    ),
                   ),
                 ),
-                title: Text(
-                  username,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(email),
-                  ],
-                ),
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
                   Navigator.push(context,
@@ -129,26 +134,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18.0,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(Icons.shopping_bag_outlined),
-                          SizedBox(width: 8),
-                          Text(
-                            'My Orders',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                          Row(
+                            children: [
+                              Icon(Icons.shopping_bag_outlined),
+                              SizedBox(width: 8),
+                              Text(
+                                'My Orders',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                            ],
                           ),
+                          Icon(Icons.arrow_forward_ios),
                         ],
                       ),
-                      Icon(Icons.arrow_forward_ios),
-                    ],
+                    ),
                   ),
                 ),
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 20),
               GestureDetector(
                 onTap: () async {
                   try {
@@ -165,22 +175,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18.0,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(Icons.person),
-                          SizedBox(width: 8),
-                          Text(
-                            'Sign out',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                          Row(
+                            children: [
+                              Icon(Icons.person),
+                              SizedBox(width: 8),
+                              Text(
+                                'Sign out',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                            ],
                           ),
+                          Icon(Icons.logout_outlined),
                         ],
                       ),
-                      Icon(Icons.logout_outlined),
-                    ],
+                    ),
                   ),
                 ),
               ),
